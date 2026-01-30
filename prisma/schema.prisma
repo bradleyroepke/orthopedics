@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  role         String   @default("VIEWER") // ADMIN or VIEWER
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Document {
+  id           String   @id @default(cuid())
+  filename     String
+  filePath     String   @unique
+  fileSize     Int
+  title        String
+  author       String?
+  year         Int?
+  journal      String?
+  subspecialty String   // FOOT_AND_ANKLE, HAND, HIP_AND_KNEE, SHOULDER_AND_ELBOW, SPINE, SPORTS_MEDICINE, TRAUMA, ONCOLOGY, PEDIATRICS, GENERAL, TEXTBOOKS, PRESENTATIONS, RESEARCH
+  documentType String   @default("ARTICLE") // ARTICLE, TEXTBOOK, PRESENTATION, RESEARCH, OTHER
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([subspecialty])
+  @@index([author])
+  @@index([year])
+  @@index([documentType])
+}
+
