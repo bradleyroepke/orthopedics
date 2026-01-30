@@ -12,7 +12,7 @@ model User {
   email        String   @unique
   passwordHash String
   name         String?
-  role         String   @default("VIEWER") // ADMIN or VIEWER
+  role         String   @default("VIEWER")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
@@ -26,8 +26,8 @@ model Document {
   author       String?
   year         Int?
   journal      String?
-  subspecialty String   // FOOT_AND_ANKLE, HAND, HIP_AND_KNEE, SHOULDER_AND_ELBOW, SPINE, SPORTS_MEDICINE, TRAUMA, ONCOLOGY, PEDIATRICS, GENERAL, TEXTBOOKS, PRESENTATIONS, RESEARCH
-  documentType String   @default("ARTICLE") // ARTICLE, TEXTBOOK, PRESENTATION, RESEARCH, OTHER
+  subspecialty String
+  documentType String   @default("ARTICLE")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -36,4 +36,3 @@ model Document {
   @@index([year])
   @@index([documentType])
 }
-

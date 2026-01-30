@@ -1,7 +1,7 @@
-import Fuse from "fuse.js";
+import Fuse, { IFuseOptions } from "fuse.js";
 import { Document } from "@prisma/client";
 
-const fuseOptions: Fuse.IFuseOptions<Document> = {
+const fuseOptions: IFuseOptions<Document> = {
   keys: [
     { name: "title", weight: 0.4 },
     { name: "author", weight: 0.3 },

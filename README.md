@@ -1,4 +1,4 @@
-# Ortho Docs
+# Ortho Dev
 
 A password-protected web application to organize and search your orthopedic documents (PDFs, presentations, textbooks) with inline PDF viewing, organized by subspecialty.
 
@@ -22,11 +22,16 @@ A password-protected web application to organize and search your orthopedic docu
 
 1. **Install dependencies:**
    ```bash
-   cd ortho-docs
+   cd ortho-dev
    npm install
    ```
 
 2. **Configure environment:**
+
+   Copy the example file and update with your values:
+   ```bash
+   cp .env.example .env
+   ```
 
    Edit `.env` and update:
    - `DOCUMENTS_PATH` - Path to your Orthopedics folder
@@ -103,12 +108,13 @@ Use "Unknown" for missing fields:
 | `npm run db:seed` | Create admin user |
 | `npm run index` | Index documents from folder |
 
-## Default Login
+## Login Credentials
 
-- **Email:** admin@ortho-docs.local
-- **Password:** changeme123
+Your login credentials are set in `.env`:
+- **Email:** Value of `ADMIN_EMAIL`
+- **Password:** Value of `ADMIN_PASSWORD`
 
-Change these in `.env` before running `npm run db:seed`.
+Make sure to set these in `.env` before running `npm run db:seed`.
 
 ## Tech Stack
 
@@ -123,7 +129,7 @@ Change these in `.env` before running `npm run db:seed`.
 ## Project Structure
 
 ```
-ortho-docs/
+ortho-dev/
 ├── prisma/
 │   └── schema.prisma          # Database schema
 ├── scripts/
