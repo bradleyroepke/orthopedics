@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Roepke Notes - Orthopedic Document Library",
+  title: "Orthopedic Index",
   description: "Organize and search your orthopedic documents",
 };
 

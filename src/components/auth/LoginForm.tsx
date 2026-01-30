@@ -48,7 +48,7 @@ export function LoginForm() {
             <Bone className="h-6 w-6 text-primary" />
           </div>
         </div>
-        <CardTitle className="text-2xl">Roepke Notes</CardTitle>
+        <CardTitle className="text-2xl">Orthopedic Index</CardTitle>
         <CardDescription>
           Sign in to access your document library
         </CardDescription>

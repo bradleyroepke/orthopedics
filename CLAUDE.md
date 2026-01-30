@@ -1,4 +1,4 @@
-# Ortho-Dev Project
+# Orthopedic Index
 
 Orthopedic documentation management application.
 

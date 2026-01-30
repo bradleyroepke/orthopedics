@@ -82,7 +82,7 @@ export function Sidebar() {
         {!collapsed && (
           <Link href="/" className="flex items-center gap-2 font-semibold">
             <Bone className="h-5 w-5 text-primary" />
-            <span>Roepke Notes</span>
+            <span>Orthopedic Index</span>
           </Link>
         )}
         <Button

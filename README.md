@@ -1,4 +1,4 @@
-# Ortho Dev
+# Orthopedic Index
 
 A password-protected web application to organize and search your orthopedic documents (PDFs, presentations, textbooks) with inline PDF viewing, organized by subspecialty.
 
