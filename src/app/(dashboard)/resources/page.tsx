@@ -66,6 +66,14 @@ const LEARNING_RESOURCES: ResourceCategory[] = [
     ],
   },
   {
+    title: "Sports (Hip / Knee)",
+    resources: [],
+  },
+  {
+    title: "Foot / Ankle",
+    resources: [],
+  },
+  {
     title: "Pediatrics",
     resources: [
       { name: "POSNA Academy", url: "https://www.posnacademy.org/", description: "Pediatric orthopaedic webinars and podcasts" },
@@ -124,10 +132,6 @@ export default function ResourcesPage() {
     });
   };
 
-  const categoriesWithResources = LEARNING_RESOURCES.filter(
-    (cat) => cat.resources.length > 0
-  );
-
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
       <div className="mb-8">
@@ -138,7 +142,7 @@ export default function ResourcesPage() {
       </div>
 
       <div className="space-y-4">
-        {categoriesWithResources.map((category) => {
+        {LEARNING_RESOURCES.map((category) => {
           const isExpanded = expandedCategories.has(category.title);
 
           return (
@@ -163,30 +167,36 @@ export default function ResourcesPage() {
               </CardHeader>
               {isExpanded && (
                 <CardContent>
-                  <ul className="space-y-3">
-                    {category.resources.map((resource) => (
-                      <li key={resource.url}>
-                        <a
-                          href={resource.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-start gap-2 p-2 rounded-md hover:bg-accent transition-colors group"
-                        >
-                          <ExternalLink className="h-4 w-4 mt-1 flex-shrink-0 text-muted-foreground group-hover:text-primary" />
-                          <div>
-                            <span className="font-medium group-hover:text-primary">
-                              {resource.name}
-                            </span>
-                            {resource.description && (
-                              <p className="text-sm text-muted-foreground">
-                                {resource.description}
-                              </p>
-                            )}
-                          </div>
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
+                  {category.resources.length > 0 ? (
+                    <ul className="space-y-3">
+                      {category.resources.map((resource) => (
+                        <li key={resource.url}>
+                          <a
+                            href={resource.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-start gap-2 p-2 rounded-md hover:bg-accent transition-colors group"
+                          >
+                            <ExternalLink className="h-4 w-4 mt-1 flex-shrink-0 text-muted-foreground group-hover:text-primary" />
+                            <div>
+                              <span className="font-medium group-hover:text-primary">
+                                {resource.name}
+                              </span>
+                              {resource.description && (
+                                <p className="text-sm text-muted-foreground">
+                                  {resource.description}
+                                </p>
+                              )}
+                            </div>
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-sm text-muted-foreground italic">
+                      No resources yet. Coming soon!
+                    </p>
+                  )}
                 </CardContent>
               )}
             </Card>
