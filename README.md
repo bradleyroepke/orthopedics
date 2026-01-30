@@ -115,7 +115,7 @@ Change these in `.env` before running `npm run db:seed`.
 - **Framework:** Next.js 14 (App Router)
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS + shadcn/ui components
-- **Database:** SQLite with Prisma ORM
+- **Database:** PostgreSQL with Prisma ORM
 - **Auth:** NextAuth.js v5
 - **PDF Viewer:** react-pdf (PDF.js)
 - **Search:** Fuse.js (client-side fuzzy search)
