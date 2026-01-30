@@ -48,9 +48,9 @@ export function LoginForm() {
             <Bone className="h-6 w-6 text-primary" />
           </div>
         </div>
-        <CardTitle className="text-2xl">Ortho Docs</CardTitle>
+        <CardTitle className="text-2xl">Roepke Notes</CardTitle>
         <CardDescription>
-          Sign in to access your orthopedic document library
+          Sign in to access your document library
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -68,7 +68,7 @@ export function LoginForm() {
             <Input
               id="email"
               type="email"
-              placeholder="admin@ortho-docs.local"
+              placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
