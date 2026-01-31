@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   Footprints,
@@ -89,18 +90,42 @@ export function Sidebar() {
         collapsed ? "w-16" : "w-64"
       )}
     >
-      <div className="flex h-14 items-center justify-between border-b px-4">
-        {!collapsed && (
-          <Link href="/" className="flex items-center gap-2 font-semibold">
-            <Bone className="h-5 w-5 text-primary" />
-            <span>Orthopedic Index</span>
+      <div className={cn(
+        "relative border-b border-primary/20 bg-gradient-to-b from-card to-accent/30",
+        collapsed ? "py-4" : "py-6"
+      )}>
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
+        {!collapsed ? (
+          <Link
+            href="/"
+            className="group flex flex-col items-center gap-3 px-4"
+          >
+            <Image
+              src="/images/logo.jpg"
+              alt="Oklahoma Orthopedics"
+              width={210}
+              height={210}
+              className="rounded-lg shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl"
+            />
+          </Link>
+        ) : (
+          <Link href="/" className="flex justify-center px-2">
+            <Image
+              src="/images/logo.jpg"
+              alt="Oklahoma Orthopedics"
+              width={40}
+              height={40}
+              className="rounded shadow-md"
+            />
           </Link>
         )}
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setCollapsed(!collapsed)}
-          className={cn("h-8 w-8", collapsed && "mx-auto")}
+          className={cn(
+            "absolute right-2 top-2 h-7 w-7 opacity-60 hover:opacity-100 transition-opacity",
+          )}
         >
           {collapsed ? (
             <ChevronRight className="h-4 w-4" />

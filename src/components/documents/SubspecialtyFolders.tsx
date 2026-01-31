@@ -120,25 +120,9 @@ export function SubspecialtyFolders() {
 
   return (
     <div className="space-y-8">
-      {/* Summary Card */}
-      <Card className="bg-gradient-to-br from-primary/5 via-primary/10 to-accent border-primary/20 shadow-sm">
-        <CardContent className="p-6">
-          <div className="flex items-center gap-4">
-            <div className="p-4 rounded-xl bg-primary/10 shadow-sm">
-              <FileText className="h-8 w-8 text-primary" />
-            </div>
-            <div>
-              <p className="text-4xl font-bold tracking-tight">{totalDocuments.toLocaleString()}</p>
-              <p className="text-muted-foreground font-medium">Total Documents</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Folder Grid */}
-      <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {sortedSubspecialties.map((sub) => {
-          const Icon = SUBSPECIALTY_ICONS[sub.name] || Folder;
           const colorClass = SUBSPECIALTY_COLORS[sub.name] || SUBSPECIALTY_COLORS.GENERAL;
           const href = `/subspecialty/${slugifySubspecialty(sub.name)}`;
 
@@ -150,19 +134,14 @@ export function SubspecialtyFolders() {
                   colorClass
                 )}
               >
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center text-center gap-3">
-                    <div className="p-4 rounded-xl bg-background/50">
-                      <Icon className="h-10 w-10" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground">
-                        {formatSubspecialty(sub.name)}
-                      </h3>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {sub.count.toLocaleString()} {sub.count === 1 ? "document" : "documents"}
-                      </p>
-                    </div>
+                <CardContent className="p-3">
+                  <div className="text-center">
+                    <h3 className="font-semibold text-sm text-foreground">
+                      {formatSubspecialty(sub.name)}
+                    </h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {sub.count.toLocaleString()} {sub.count === 1 ? "doc" : "docs"}
+                    </p>
                   </div>
                 </CardContent>
               </Card>
