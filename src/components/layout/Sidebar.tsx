@@ -22,6 +22,7 @@ import {
   ChevronLeft,
   ChevronRight,
   GraduationCap,
+  ClipboardList,
 } from "lucide-react";
 import { cn, formatSubspecialty, slugifySubspecialty } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -169,6 +170,14 @@ export function Sidebar() {
             );
           })}
 
+          <NavItem
+            href="/oite"
+            icon={ClipboardList}
+            label="OITE"
+            isActive={pathname === "/oite"}
+            collapsed={collapsed}
+          />
+
           {!collapsed && activeSubspecialties.length > 0 && (
             <div className="px-3 pt-4 pb-1 text-xs font-medium text-muted-foreground uppercase tracking-wider">
               Subspecialties
@@ -176,7 +185,6 @@ export function Sidebar() {
           )}
 
           {activeSubspecialties.map((sub) => {
-            const Icon = SUBSPECIALTY_ICONS[sub.name] || Folder;
             const href = `/subspecialty/${slugifySubspecialty(sub.name)}`;
             const isActive = pathname === href;
 
@@ -184,7 +192,6 @@ export function Sidebar() {
               <NavItem
                 key={sub.name}
                 href={href}
-                icon={Icon}
                 label={formatSubspecialty(sub.name)}
                 count={sub.count}
                 isActive={isActive}
@@ -200,7 +207,7 @@ export function Sidebar() {
 
 interface NavItemProps {
   href: string;
-  icon: React.ElementType;
+  icon?: React.ElementType;
   label: string;
   count?: number;
   isActive: boolean;
@@ -227,7 +234,7 @@ function NavItem({
       )}
       title={collapsed ? label : undefined}
     >
-      <Icon className="h-4 w-4 flex-shrink-0" />
+      {Icon && <Icon className="h-4 w-4 flex-shrink-0" />}
       {!collapsed && (
         <>
           <span className="flex-1 truncate">{label}</span>

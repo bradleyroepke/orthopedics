@@ -4,6 +4,7 @@ type Subspecialty = string;
 type DocumentType = string;
 import { readdir, stat } from "fs/promises";
 import path from "path";
+import { getTextbookMetadata, parseTextbookFilename } from "../src/lib/textbook-metadata";
 
 const prisma = new PrismaClient();
 
@@ -38,6 +39,8 @@ const FOLDER_SUBSPECIALTY_MAP: Record<string, Subspecialty> = {
   Presentation: "PRESENTATIONS",
   Research: "RESEARCH",
   General: "GENERAL",
+  OITE: "OITE",
+  "Past Exams": "OITE",
 };
 
 // Map file extensions and paths to document types
@@ -54,12 +57,38 @@ function getDocumentType(filename: string, filePath: string): DocumentType {
 
 // Parse filename to extract metadata
 // Expected format: Author_Year_Journal_Title.pdf
-function parseFilename(filename: string): {
+function parseFilename(filename: string, isTextbook: boolean = false): {
   author: string | null;
   year: number | null;
   journal: string | null;
   title: string;
 } {
+  // Special handling for textbooks
+  if (isTextbook) {
+    const metadata = getTextbookMetadata(filename);
+    if (metadata) {
+      // Build full title with subtitle if available
+      const fullTitle = metadata.subtitle
+        ? `${metadata.title}: ${metadata.subtitle}`
+        : metadata.title;
+      return {
+        author: metadata.author,
+        year: metadata.year,
+        journal: metadata.edition, // Store edition in journal field for textbooks
+        title: fullTitle,
+      };
+    }
+
+    // Fallback: parse textbook filename format (Author_Title_Edition_Year)
+    const parsed = parseTextbookFilename(filename);
+    return {
+      author: parsed.author,
+      year: parsed.year,
+      journal: parsed.edition,
+      title: parsed.title,
+    };
+  }
+
   const nameWithoutExt = filename.replace(/\.[^.]+$/, "");
   const parts = nameWithoutExt.split("_");
 
@@ -116,6 +145,21 @@ function normalizeJournal(abbrev: string): string {
   };
 
   return journalMap[abbrev] || abbrev.replace(/-/g, " ");
+}
+
+// Extract year from folder path (e.g., "OITE/Past Exams/2016/file.pdf" -> 2016)
+function getYearFromPath(filePath: string): number | null {
+  const parts = filePath.split(path.sep);
+
+  for (const part of parts) {
+    // Check if folder name is a 4-digit year between 1990 and 2100
+    const yearNum = parseInt(part);
+    if (!isNaN(yearNum) && yearNum >= 1990 && yearNum <= 2100 && part.length === 4) {
+      return yearNum;
+    }
+  }
+
+  return null;
 }
 
 // Determine subspecialty from path
@@ -179,13 +223,28 @@ async function scanDirectory(
           const fileStat = await stat(fullPath);
           const relativePath = path.relative(basePath, fullPath);
 
+          const subspecialty = getSubspecialtyFromPath(relativePath);
+          const isTextbook = subspecialty === "TEXTBOOKS";
+          const isOITE = subspecialty === "OITE";
+
+          // Parse metadata from filename
+          const metadata = parseFilename(entry.name, isTextbook);
+
+          // For OITE documents, try to extract year from folder path
+          if (isOITE && !metadata.year) {
+            const pathYear = getYearFromPath(relativePath);
+            if (pathYear) {
+              metadata.year = pathYear;
+            }
+          }
+
           results.push({
             filename: entry.name,
             filePath: relativePath,
             fileSize: fileStat.size,
-            subspecialty: getSubspecialtyFromPath(relativePath),
+            subspecialty,
             documentType: getDocumentType(entry.name, relativePath),
-            metadata: parseFilename(entry.name),
+            metadata,
           });
         }
       }

@@ -15,6 +15,7 @@ export const VALID_SUBSPECIALTIES = [
   "TEXTBOOKS",
   "PRESENTATIONS",
   "RESEARCH",
+  "OITE",
 ];
 
 export function cn(...inputs: ClassValue[]) {
