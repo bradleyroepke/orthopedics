@@ -44,8 +44,8 @@ export function LoginForm() {
     <Card className="w-full max-w-md">
       <CardHeader className="space-y-1 text-center">
         <div className="flex justify-center mb-4">
-          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-            <Bone className="h-6 w-6 text-primary" />
+          <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center shadow-sm">
+            <Bone className="h-7 w-7 text-primary" />
           </div>
         </div>
         <CardTitle className="text-2xl">Orthopedic Index</CardTitle>

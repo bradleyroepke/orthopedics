@@ -44,19 +44,19 @@ const SUBSPECIALTY_ICONS: Record<string, React.ElementType> = {
 };
 
 const SUBSPECIALTY_COLORS: Record<string, string> = {
-  FOOT_AND_ANKLE: "bg-blue-500/10 text-blue-600 hover:bg-blue-500/20",
-  HAND: "bg-amber-500/10 text-amber-600 hover:bg-amber-500/20",
-  HIP_AND_KNEE: "bg-green-500/10 text-green-600 hover:bg-green-500/20",
-  SHOULDER_AND_ELBOW: "bg-purple-500/10 text-purple-600 hover:bg-purple-500/20",
-  SPINE: "bg-red-500/10 text-red-600 hover:bg-red-500/20",
-  SPORTS_MEDICINE: "bg-cyan-500/10 text-cyan-600 hover:bg-cyan-500/20",
-  TRAUMA: "bg-orange-500/10 text-orange-600 hover:bg-orange-500/20",
-  ONCOLOGY: "bg-pink-500/10 text-pink-600 hover:bg-pink-500/20",
-  PEDIATRICS: "bg-indigo-500/10 text-indigo-600 hover:bg-indigo-500/20",
-  GENERAL: "bg-slate-500/10 text-slate-600 hover:bg-slate-500/20",
-  TEXTBOOKS: "bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20",
-  PRESENTATIONS: "bg-violet-500/10 text-violet-600 hover:bg-violet-500/20",
-  RESEARCH: "bg-teal-500/10 text-teal-600 hover:bg-teal-500/20",
+  FOOT_AND_ANKLE: "bg-sky-500/10 text-sky-700 hover:bg-sky-500/20",
+  HAND: "bg-amber-500/10 text-amber-700 hover:bg-amber-500/20",
+  HIP_AND_KNEE: "bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/20",
+  SHOULDER_AND_ELBOW: "bg-violet-500/10 text-violet-700 hover:bg-violet-500/20",
+  SPINE: "bg-rose-500/10 text-rose-700 hover:bg-rose-500/20",
+  SPORTS_MEDICINE: "bg-teal-500/10 text-teal-700 hover:bg-teal-500/20",
+  TRAUMA: "bg-orange-500/10 text-orange-700 hover:bg-orange-500/20",
+  ONCOLOGY: "bg-pink-500/10 text-pink-700 hover:bg-pink-500/20",
+  PEDIATRICS: "bg-indigo-500/10 text-indigo-700 hover:bg-indigo-500/20",
+  GENERAL: "bg-stone-500/10 text-stone-700 hover:bg-stone-500/20",
+  TEXTBOOKS: "bg-green-500/10 text-green-700 hover:bg-green-500/20",
+  PRESENTATIONS: "bg-purple-500/10 text-purple-700 hover:bg-purple-500/20",
+  RESEARCH: "bg-cyan-500/10 text-cyan-700 hover:bg-cyan-500/20",
 };
 
 // Define display order for subspecialties
@@ -121,15 +121,15 @@ export function SubspecialtyFolders() {
   return (
     <div className="space-y-8">
       {/* Summary Card */}
-      <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
+      <Card className="bg-gradient-to-br from-primary/5 via-primary/10 to-accent border-primary/20 shadow-sm">
         <CardContent className="p-6">
           <div className="flex items-center gap-4">
-            <div className="p-3 rounded-lg bg-primary/10">
+            <div className="p-4 rounded-xl bg-primary/10 shadow-sm">
               <FileText className="h-8 w-8 text-primary" />
             </div>
             <div>
-              <p className="text-3xl font-bold">{totalDocuments.toLocaleString()}</p>
-              <p className="text-muted-foreground">Total Documents</p>
+              <p className="text-4xl font-bold tracking-tight">{totalDocuments.toLocaleString()}</p>
+              <p className="text-muted-foreground font-medium">Total Documents</p>
             </div>
           </div>
         </CardContent>
@@ -146,7 +146,7 @@ export function SubspecialtyFolders() {
             <Link key={sub.name} href={href}>
               <Card
                 className={cn(
-                  "h-full transition-all duration-200 cursor-pointer border-2 border-transparent hover:border-primary/30 hover:shadow-md",
+                  "h-full transition-all duration-200 cursor-pointer border border-transparent hover:border-primary/20 hover:shadow-lg hover:-translate-y-0.5",
                   colorClass
                 )}
               >
