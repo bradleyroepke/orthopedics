@@ -9,25 +9,36 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const counts = await prisma.document.groupBy({
-    by: ['subspecialty'],
-    _count: {
-      subspecialty: true,
-    },
-    orderBy: {
-      subspecialty: 'asc',
-    },
-  });
+  const [docCounts, landmarkCounts] = await Promise.all([
+    prisma.document.groupBy({
+      by: ['subspecialty'],
+      _count: {
+        subspecialty: true,
+      },
+      orderBy: {
+        subspecialty: 'asc',
+      },
+    }),
+    prisma.landmarkArticle.groupBy({
+      by: ['subspecialty'],
+      where: { documentId: { not: null } },
+      _count: {
+        subspecialty: true,
+      },
+    }),
+  ]);
 
   const subspecialties = VALID_SUBSPECIALTIES.map((sub) => {
-    const count = counts.find((c) => c.subspecialty === sub);
+    const docCount = docCounts.find((c) => c.subspecialty === sub);
+    const landmarkCount = landmarkCounts.find((c) => c.subspecialty === sub);
     return {
       name: sub,
-      count: count?._count.subspecialty || 0,
+      count: docCount?._count.subspecialty || 0,
+      landmarkCount: landmarkCount?._count.subspecialty || 0,
     };
   });
 
-  const totalDocuments = counts.reduce(
+  const totalDocuments = docCounts.reduce(
     (sum, c) => sum + c._count.subspecialty,
     0
   );

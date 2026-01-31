@@ -17,6 +17,7 @@ import {
   Presentation,
   FlaskConical,
   FileText,
+  Star,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -25,6 +26,7 @@ import { cn, formatSubspecialty, slugifySubspecialty } from '@/lib/utils';
 interface SubspecialtyData {
   name: string;
   count: number;
+  landmarkCount: number;
 }
 
 const SUBSPECIALTY_ICONS: Record<string, React.ElementType> = {
@@ -144,6 +146,13 @@ export function SubspecialtyFolders() {
                       {sub.count.toLocaleString()}{' '}
                       {sub.count === 1 ? 'doc' : 'docs'}
                     </p>
+                    {sub.landmarkCount > 0 && (
+                      <p className="text-xs text-amber-600 mt-0.5 flex items-center justify-center gap-1">
+                        <Star className="h-3 w-3 fill-amber-500" />
+                        {sub.landmarkCount} landmark
+                        {sub.landmarkCount === 1 ? '' : 's'}
+                      </p>
+                    )}
                   </div>
                 </CardContent>
               </Card>

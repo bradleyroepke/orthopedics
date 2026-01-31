@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
@@ -38,15 +39,25 @@ interface SubspecialtySummary {
 }
 
 export default function LandmarksPage() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [articles, setArticles] = useState<LandmarkArticle[]>([]);
   const [summary, setSummary] = useState<SubspecialtySummary[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedSubspecialty, setSelectedSubspecialty] = useState<
-    string | null
-  >(null);
   const [expandedDecades, setExpandedDecades] = useState<Set<string>>(
     new Set()
   );
+
+  // Read subspecialty from URL params
+  const selectedSubspecialty = searchParams.get('subspecialty');
+
+  const setSelectedSubspecialty = (subspecialty: string | null) => {
+    if (subspecialty) {
+      router.push(`/landmarks?subspecialty=${subspecialty}`);
+    } else {
+      router.push('/landmarks');
+    }
+  };
 
   useEffect(() => {
     async function fetchArticles() {
