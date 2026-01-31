@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Bone, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -44,9 +45,13 @@ export function LoginForm() {
     <Card className="w-full max-w-md">
       <CardHeader className="space-y-1 text-center">
         <div className="flex justify-center mb-4">
-          <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center shadow-sm">
-            <Bone className="h-7 w-7 text-primary" />
-          </div>
+          <Image
+            src="/images/logo.jpg"
+            alt="Oklahoma Orthopedics"
+            width={180}
+            height={180}
+            className="rounded-lg shadow-lg"
+          />
         </div>
         <CardTitle className="text-2xl">Orthopedic Index</CardTitle>
         <CardDescription>

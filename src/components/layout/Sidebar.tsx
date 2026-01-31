@@ -21,13 +21,11 @@ import {
   Home,
   ChevronLeft,
   ChevronRight,
-  ChevronDown,
   GraduationCap,
 } from "lucide-react";
 import { cn, formatSubspecialty, slugifySubspecialty } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 
 interface SubspecialtyData {
   name: string;
@@ -54,7 +52,6 @@ export function Sidebar() {
   const [subspecialties, setSubspecialties] = useState<SubspecialtyData[]>([]);
   const [totalDocuments, setTotalDocuments] = useState(0);
   const [collapsed, setCollapsed] = useState(false);
-  const [articlesExpanded, setArticlesExpanded] = useState(true);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -172,25 +169,13 @@ export function Sidebar() {
             );
           })}
 
-          {!collapsed && (
-            <>
-              <Separator className="my-4" />
-              <button
-                onClick={() => setArticlesExpanded(!articlesExpanded)}
-                className="flex w-full items-center justify-between px-3 py-1 text-xs font-medium text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors"
-              >
-                <span>Articles</span>
-                <ChevronDown
-                  className={cn(
-                    "h-4 w-4 transition-transform",
-                    !articlesExpanded && "-rotate-90"
-                  )}
-                />
-              </button>
-            </>
+          {!collapsed && activeSubspecialties.length > 0 && (
+            <div className="px-3 pt-4 pb-1 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              Subspecialties
+            </div>
           )}
 
-          {articlesExpanded && activeSubspecialties.map((sub) => {
+          {activeSubspecialties.map((sub) => {
             const Icon = SUBSPECIALTY_ICONS[sub.name] || Folder;
             const href = `/subspecialty/${slugifySubspecialty(sub.name)}`;
             const isActive = pathname === href;
