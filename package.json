@@ -13,7 +13,9 @@
     "db:push": "prisma db push",
     "db:seed": "tsx scripts/seed.ts",
     "index": "tsx scripts/index-documents.ts",
-    "import-landmarks": "tsx scripts/import-landmark-articles.ts"
+    "import-landmarks": "tsx scripts/import-landmark-articles.ts",
+    "rename:analyze": "tsx scripts/rename-articles.ts",
+    "rename:apply": "tsx scripts/apply-renames.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
@@ -33,6 +35,7 @@
     "lucide-react": "^0.447.0",
     "next": "14.2.14",
     "next-auth": "^5.0.0-beta.25",
+    "pdf-parse": "^1.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-pdf": "^9.1.1",
@@ -44,6 +47,7 @@
     "@types/adm-zip": "^0.5.7",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.16.10",
+    "@types/pdf-parse": "^1.1.5",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",
     "@types/xml2js": "^0.4.14",

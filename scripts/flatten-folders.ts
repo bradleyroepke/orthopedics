@@ -13,7 +13,7 @@ const FOLDERS_TO_FLATTEN = [
 ];
 
 // Or specify a parent folder and it will flatten all immediate subfolders
-const PARENT_FOLDERS_TO_PROCESS = [
+const PARENT_FOLDERS_TO_PROCESS: string[] = [
   // Already processed
 ];
 

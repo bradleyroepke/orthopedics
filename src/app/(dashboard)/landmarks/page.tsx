@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -38,7 +38,36 @@ interface SubspecialtySummary {
   count: number;
 }
 
+function LandmarksPageLoading() {
+  return (
+    <div className="space-y-6">
+      <div>
+        <Skeleton className="h-8 w-64" />
+        <Skeleton className="h-4 w-96 mt-2" />
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <Skeleton key={i} className="h-8 w-24" />
+        ))}
+      </div>
+      <div className="space-y-4">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Skeleton key={i} className="h-40" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function LandmarksPage() {
+  return (
+    <Suspense fallback={<LandmarksPageLoading />}>
+      <LandmarksPageContent />
+    </Suspense>
+  );
+}
+
+function LandmarksPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [articles, setArticles] = useState<LandmarkArticle[]>([]);
