@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import prisma from "@/lib/prisma";
-import { createSearchIndex, searchDocuments } from "@/lib/search";
+import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/lib/auth';
+import prisma from '@/lib/prisma';
+import { createSearchIndex, searchDocuments } from '@/lib/search';
 
 let searchIndex: ReturnType<typeof createSearchIndex> | null = null;
 let indexedAt: number = 0;
@@ -20,12 +20,12 @@ async function getSearchIndex() {
 export async function GET(request: NextRequest) {
   const session = await auth();
   if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const searchParams = request.nextUrl.searchParams;
-  const query = searchParams.get("q") || "";
-  const limit = parseInt(searchParams.get("limit") || "50");
+  const query = searchParams.get('q') || '';
+  const limit = parseInt(searchParams.get('limit') || '50');
 
   if (!query.trim()) {
     return NextResponse.json({ results: [] });

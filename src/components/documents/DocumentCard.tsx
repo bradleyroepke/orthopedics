@@ -1,11 +1,18 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { FileText, Calendar, User, BookOpen, BookMarked, Star } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { formatFileSize, formatSubspecialty } from "@/lib/utils";
-import { Document } from "@prisma/client";
+import Link from 'next/link';
+import {
+  FileText,
+  Calendar,
+  User,
+  BookOpen,
+  BookMarked,
+  Star,
+} from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { formatFileSize, formatSubspecialty } from '@/lib/utils';
+import { Document } from '@prisma/client';
 
 interface DocumentCardProps {
   document: Document;
@@ -13,7 +20,7 @@ interface DocumentCardProps {
 }
 
 export function DocumentCard({ document, isLandmark }: DocumentCardProps) {
-  const isTextbook = document.subspecialty === "TEXTBOOKS";
+  const isTextbook = document.subspecialty === 'TEXTBOOKS';
 
   // Textbook-specific display
   if (isTextbook) {
@@ -36,9 +43,7 @@ export function DocumentCard({ document, isLandmark }: DocumentCardProps) {
                 </p>
 
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                  {document.journal && (
-                    <span>{document.journal}</span>
-                  )}
+                  {document.journal && <span>{document.journal}</span>}
                   {document.year && (
                     <span className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
@@ -48,7 +53,10 @@ export function DocumentCard({ document, isLandmark }: DocumentCardProps) {
                 </div>
 
                 <div className="flex items-center gap-2 pt-1">
-                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-green-500/10 text-green-700">
+                  <Badge
+                    variant="secondary"
+                    className="text-[10px] px-1.5 py-0 bg-green-500/10 text-green-700"
+                  >
                     Textbook
                   </Badge>
                   <span className="text-[10px] text-muted-foreground">
@@ -66,10 +74,14 @@ export function DocumentCard({ document, isLandmark }: DocumentCardProps) {
   // Standard document display
   return (
     <Link href={`/documents/${document.id}`}>
-      <Card className={`h-full transition-all hover:shadow-md hover:border-primary/50 ${isLandmark ? "bg-gradient-to-br from-amber-500/5 to-orange-500/5 ring-1 ring-amber-500/20" : ""}`}>
+      <Card
+        className={`h-full transition-all hover:shadow-md hover:border-primary/50 ${isLandmark ? 'bg-gradient-to-br from-amber-500/5 to-orange-500/5 ring-1 ring-amber-500/20' : ''}`}
+      >
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
-            <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${isLandmark ? "bg-amber-500/10" : "bg-primary/10"}`}>
+            <div
+              className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${isLandmark ? 'bg-amber-500/10' : 'bg-primary/10'}`}
+            >
               {isLandmark ? (
                 <Star className="h-5 w-5 text-amber-600" />
               ) : (
@@ -86,7 +98,9 @@ export function DocumentCard({ document, isLandmark }: DocumentCardProps) {
                 {document.author && (
                   <span className="flex items-center gap-1">
                     <User className="h-3 w-3" />
-                    <span className="truncate max-w-[150px]">{document.author}</span>
+                    <span className="truncate max-w-[150px]">
+                      {document.author}
+                    </span>
                   </span>
                 )}
                 {document.year && (
@@ -98,14 +112,19 @@ export function DocumentCard({ document, isLandmark }: DocumentCardProps) {
                 {document.journal && (
                   <span className="flex items-center gap-1">
                     <BookOpen className="h-3 w-3" />
-                    <span className="truncate max-w-[150px]">{document.journal}</span>
+                    <span className="truncate max-w-[150px]">
+                      {document.journal}
+                    </span>
                   </span>
                 )}
               </div>
 
               <div className="flex items-center gap-2 pt-1">
                 {isLandmark && (
-                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-amber-500/10 text-amber-700">
+                  <Badge
+                    variant="secondary"
+                    className="text-[10px] px-1.5 py-0 bg-amber-500/10 text-amber-700"
+                  >
                     Landmark
                   </Badge>
                 )}

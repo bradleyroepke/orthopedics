@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { ExternalLink, ChevronDown, ChevronRight } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from 'react';
+import { ExternalLink, ChevronDown, ChevronRight } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface Resource {
   name: string;
@@ -17,100 +17,256 @@ interface ResourceCategory {
 
 const LEARNING_RESOURCES: ResourceCategory[] = [
   {
-    title: "General",
+    title: 'General',
     resources: [
-      { name: "Orthobullets", url: "https://www.orthobullets.com/", description: "Free orthopaedic education and collaboration community" },
-      { name: "AAOS ROCK", url: "https://rock.aaos.org/", description: "Resident Orthopaedic Core Knowledge curriculum" },
-      { name: "ResStudy", url: "https://www.aaos.org/education/examinations/ResStudy/", description: "AAOS practice exam question bank" },
-      { name: "VuMedi", url: "https://www.vumedi.com/orthopaedics/", description: "Surgical video platform for physicians" },
-      { name: "Osgenic", url: "https://osgenic.com/", description: "Surgical approaches and anatomy resource" },
-      { name: "OrthoPedia", url: "https://www.orthopedia.com/", description: "Arthrex educational video library" },
-      { name: "AAOS Orthopaedic Video Theater", url: "https://www.aaos.org/videos", description: "Peer-reviewed surgical technique videos" },
-      { name: "Orthoracle", url: "https://www.orthoracle.com/", description: "Online surgical atlas with step-by-step techniques" },
-      { name: "UCSF Orthopedic Curriculum", url: "https://orthosurgery.ucsf.edu/education/residency", description: "UCSF residency education resources" },
-      { name: "NYU Ortho Digital Library", url: "https://www.ortholibrary.org/", description: "NYU Langone Orthopedic Digital Library" },
+      {
+        name: 'Orthobullets',
+        url: 'https://www.orthobullets.com/',
+        description: 'Free orthopaedic education and collaboration community',
+      },
+      {
+        name: 'AAOS ROCK',
+        url: 'https://rock.aaos.org/',
+        description: 'Resident Orthopaedic Core Knowledge curriculum',
+      },
+      {
+        name: 'ResStudy',
+        url: 'https://www.aaos.org/education/examinations/ResStudy/',
+        description: 'AAOS practice exam question bank',
+      },
+      {
+        name: 'VuMedi',
+        url: 'https://www.vumedi.com/orthopaedics/',
+        description: 'Surgical video platform for physicians',
+      },
+      {
+        name: 'Osgenic',
+        url: 'https://osgenic.com/',
+        description: 'Surgical approaches and anatomy resource',
+      },
+      {
+        name: 'OrthoPedia',
+        url: 'https://www.orthopedia.com/',
+        description: 'Arthrex educational video library',
+      },
+      {
+        name: 'AAOS Orthopaedic Video Theater',
+        url: 'https://www.aaos.org/videos',
+        description: 'Peer-reviewed surgical technique videos',
+      },
+      {
+        name: 'Orthoracle',
+        url: 'https://www.orthoracle.com/',
+        description: 'Online surgical atlas with step-by-step techniques',
+      },
+      {
+        name: 'UCSF Orthopedic Curriculum',
+        url: 'https://orthosurgery.ucsf.edu/education/residency',
+        description: 'UCSF residency education resources',
+      },
+      {
+        name: 'NYU Ortho Digital Library',
+        url: 'https://www.ortholibrary.org/',
+        description: 'NYU Langone Orthopedic Digital Library',
+      },
     ],
   },
   {
-    title: "Billing / Coding",
+    title: 'Billing / Coding',
     resources: [
-      { name: "PChong - Ortho CPT Codes", url: "https://pchong.net/cgi-bin/cptortho.cgi", description: "Orthopedic CPT code lookup tool" },
+      {
+        name: 'PChong - Ortho CPT Codes',
+        url: 'https://pchong.net/cgi-bin/cptortho.cgi',
+        description: 'Orthopedic CPT code lookup tool',
+      },
     ],
   },
   {
-    title: "Trauma",
+    title: 'Trauma',
     resources: [
-      { name: "OTA Core Curriculum Lectures", url: "https://education.ota.org/core-curriculum-lectures", description: "Orthopaedic Trauma Association lecture series" },
-      { name: "OrthoClips", url: "https://www.orthoclips.com/", description: "Multimedia orthopaedic academy" },
+      {
+        name: 'OTA Core Curriculum Lectures',
+        url: 'https://education.ota.org/core-curriculum-lectures',
+        description: 'Orthopaedic Trauma Association lecture series',
+      },
+      {
+        name: 'OrthoClips',
+        url: 'https://www.orthoclips.com/',
+        description: 'Multimedia orthopaedic academy',
+      },
     ],
   },
   {
-    title: "Shoulder / Elbow",
+    title: 'Shoulder / Elbow',
     resources: [
-      { name: "The Shoulder and Elbow Page", url: "https://faculty.washington.edu/alexbert/Shoulder/", description: "UW comprehensive shoulder and elbow resource" },
-      { name: "Shoulderdoc", url: "https://shoulderdoc.co.uk/", description: "Shoulder symptoms, treatment, and research" },
-      { name: "ASES", url: "https://ases.pathlms.com/", description: "American Shoulder and Elbow Surgeons education" },
+      {
+        name: 'The Shoulder and Elbow Page',
+        url: 'https://faculty.washington.edu/alexbert/Shoulder/',
+        description: 'UW comprehensive shoulder and elbow resource',
+      },
+      {
+        name: 'Shoulderdoc',
+        url: 'https://shoulderdoc.co.uk/',
+        description: 'Shoulder symptoms, treatment, and research',
+      },
+      {
+        name: 'ASES',
+        url: 'https://ases.pathlms.com/',
+        description: 'American Shoulder and Elbow Surgeons education',
+      },
     ],
   },
   {
-    title: "Hand",
+    title: 'Hand',
     resources: [
-      { name: "Hand.e (ASSH)", url: "https://www.assh.org/hande/s/", description: "Hand surgery video curriculum from ASSH" },
-      { name: "Wash U Surgical Education", url: "https://surgicaleducation.wustl.edu/", description: "Washington University surgical video education" },
+      {
+        name: 'Hand.e (ASSH)',
+        url: 'https://www.assh.org/hande/s/',
+        description: 'Hand surgery video curriculum from ASSH',
+      },
+      {
+        name: 'Wash U Surgical Education',
+        url: 'https://surgicaleducation.wustl.edu/',
+        description: 'Washington University surgical video education',
+      },
     ],
   },
   {
-    title: "Adult Reconstruction",
+    title: 'Adult Reconstruction',
     resources: [
-      { name: "Hip and Knee Book", url: "https://hipandkneebook.com", description: "Free online textbook for joint replacement" },
+      {
+        name: 'Hip and Knee Book',
+        url: 'https://hipandkneebook.com',
+        description: 'Free online textbook for joint replacement',
+      },
     ],
   },
   {
-    title: "Sports (Hip / Knee)",
+    title: 'Sports (Hip / Knee)',
     resources: [],
   },
   {
-    title: "Foot / Ankle",
+    title: 'Foot / Ankle',
     resources: [],
   },
   {
-    title: "Pediatrics",
+    title: 'Pediatrics',
     resources: [
-      { name: "POSNA Academy", url: "https://www.posnacademy.org/", description: "Pediatric orthopaedic webinars and podcasts" },
-      { name: "POSNA Study Guide", url: "https://posna.org/physician-education/study-guide", description: "Pediatric orthopaedic study resources" },
+      {
+        name: 'POSNA Academy',
+        url: 'https://www.posnacademy.org/',
+        description: 'Pediatric orthopaedic webinars and podcasts',
+      },
+      {
+        name: 'POSNA Study Guide',
+        url: 'https://posna.org/physician-education/study-guide',
+        description: 'Pediatric orthopaedic study resources',
+      },
     ],
   },
   {
-    title: "Oncology",
+    title: 'Oncology',
     resources: [
-      { name: "James Wittig - MEDtube", url: "https://medtube.net/users/james-wittig", description: "Orthopedic oncology lecture videos" },
-      { name: "TumorSurgery.org", url: "https://tumorsurgery.org/", description: "Orthopedic oncology resources from Dr. Wittig" },
+      {
+        name: 'James Wittig - MEDtube',
+        url: 'https://medtube.net/users/james-wittig',
+        description: 'Orthopedic oncology lecture videos',
+      },
+      {
+        name: 'TumorSurgery.org',
+        url: 'https://tumorsurgery.org/',
+        description: 'Orthopedic oncology resources from Dr. Wittig',
+      },
     ],
   },
   {
-    title: "Spine",
+    title: 'Spine',
     resources: [
-      { name: "The Spinepedia", url: "https://thespinepedia.com/", description: "Spine surgery educational resources" },
+      {
+        name: 'The Spinepedia',
+        url: 'https://thespinepedia.com/',
+        description: 'Spine surgery educational resources',
+      },
     ],
   },
   {
-    title: "YouTube Channels",
+    title: 'YouTube Channels',
     resources: [
-      { name: "Dr. Vinay Kumar Singh", url: "https://www.youtube.com/@DrVinayKumarSingh", description: "Surgical videos and examinations" },
-      { name: "Orthobullets", url: "https://www.youtube.com/@orthobullets", description: "Official Orthobullets video channel" },
-      { name: "HSS", url: "https://hss.edu/orthopaedic-surgical-videos", description: "Hospital for Special Surgery surgical videos" },
-      { name: "Husky Orthopedics", url: "https://www.youtube.com/user/HuskyOrthopaedics", description: "UW Orthopaedics & Sports Medicine" },
-      { name: "NYU Ortho", url: "https://www.youtube.com/@NYULangoneHealth", description: "NYU Langone Health" },
-      { name: "Pathognomonique", url: "https://www.youtube.com/@medamir", description: "Trauma and orthopedic education" },
-      { name: "OrthoClips", url: "https://www.youtube.com/@OrthoClips", description: "Free education for orthopaedic residents" },
-      { name: "Just Ortho Things!", url: "https://www.youtube.com/@Justorthothings", description: "Orthopedic surgery content" },
-      { name: "ASES", url: "https://www.youtube.com/@AmericanShoulderElbowSurgeons", description: "American Shoulder and Elbow Surgeons" },
-      { name: "Anthony Romeo", url: "https://www.youtube.com/@AnthonyRomeoMD", description: "Shoulder surgical techniques" },
-      { name: "Arthroscopy Techniques", url: "https://www.youtube.com/@ArthroscopyTechniques", description: "Arthroscopic surgical technique videos" },
-      { name: "Thomas McClellan", url: "https://www.youtube.com/@DrThomasMcClellan", description: "Hand and plastic surgery videos" },
-      { name: "Wash U St. Louis", url: "https://www.youtube.com/@WashUSurgicalEducation", description: "Washington University surgical education" },
-      { name: "Arthrex", url: "https://www.youtube.com/@Arthrex", description: "Surgical techniques and animations" },
-      { name: "Seattle Science Foundation", url: "https://www.youtube.com/@SeattleScienceFoundation", description: "Spine surgery education and research" },
+      {
+        name: 'Dr. Vinay Kumar Singh',
+        url: 'https://www.youtube.com/@DrVinayKumarSingh',
+        description: 'Surgical videos and examinations',
+      },
+      {
+        name: 'Orthobullets',
+        url: 'https://www.youtube.com/@orthobullets',
+        description: 'Official Orthobullets video channel',
+      },
+      {
+        name: 'HSS',
+        url: 'https://hss.edu/orthopaedic-surgical-videos',
+        description: 'Hospital for Special Surgery surgical videos',
+      },
+      {
+        name: 'Husky Orthopedics',
+        url: 'https://www.youtube.com/user/HuskyOrthopaedics',
+        description: 'UW Orthopaedics & Sports Medicine',
+      },
+      {
+        name: 'NYU Ortho',
+        url: 'https://www.youtube.com/@NYULangoneHealth',
+        description: 'NYU Langone Health',
+      },
+      {
+        name: 'Pathognomonique',
+        url: 'https://www.youtube.com/@medamir',
+        description: 'Trauma and orthopedic education',
+      },
+      {
+        name: 'OrthoClips',
+        url: 'https://www.youtube.com/@OrthoClips',
+        description: 'Free education for orthopaedic residents',
+      },
+      {
+        name: 'Just Ortho Things!',
+        url: 'https://www.youtube.com/@Justorthothings',
+        description: 'Orthopedic surgery content',
+      },
+      {
+        name: 'ASES',
+        url: 'https://www.youtube.com/@AmericanShoulderElbowSurgeons',
+        description: 'American Shoulder and Elbow Surgeons',
+      },
+      {
+        name: 'Anthony Romeo',
+        url: 'https://www.youtube.com/@AnthonyRomeoMD',
+        description: 'Shoulder surgical techniques',
+      },
+      {
+        name: 'Arthroscopy Techniques',
+        url: 'https://www.youtube.com/@ArthroscopyTechniques',
+        description: 'Arthroscopic surgical technique videos',
+      },
+      {
+        name: 'Thomas McClellan',
+        url: 'https://www.youtube.com/@DrThomasMcClellan',
+        description: 'Hand and plastic surgery videos',
+      },
+      {
+        name: 'Wash U St. Louis',
+        url: 'https://www.youtube.com/@WashUSurgicalEducation',
+        description: 'Washington University surgical education',
+      },
+      {
+        name: 'Arthrex',
+        url: 'https://www.youtube.com/@Arthrex',
+        description: 'Surgical techniques and animations',
+      },
+      {
+        name: 'Seattle Science Foundation',
+        url: 'https://www.youtube.com/@SeattleScienceFoundation',
+        description: 'Spine surgery education and research',
+      },
     ],
   },
 ];

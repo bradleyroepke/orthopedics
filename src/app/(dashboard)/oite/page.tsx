@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { Document } from "@prisma/client";
-import { DocumentCard } from "@/components/documents/DocumentCard";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ChevronDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useState, useEffect } from 'react';
+import { Document } from '@prisma/client';
+import { DocumentCard } from '@/components/documents/DocumentCard';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ChevronDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface DocumentWithLandmark extends Document {
   isLandmark?: boolean;
@@ -19,20 +19,20 @@ export default function OITEPage() {
   useEffect(() => {
     async function fetchDocuments() {
       try {
-        const res = await fetch("/api/documents?subspecialty=OITE&limit=200");
+        const res = await fetch('/api/documents?subspecialty=OITE&limit=200');
         if (res.ok) {
           const data = await res.json();
           setDocuments(data.documents);
           // Expand all years by default
           const years = new Set<string>();
           data.documents.forEach((doc: Document) => {
-            const year = doc.year?.toString() || "Unknown";
+            const year = doc.year?.toString() || 'Unknown';
             years.add(year);
           });
           setExpandedYears(years);
         }
       } catch (error) {
-        console.error("Failed to fetch documents:", error);
+        console.error('Failed to fetch documents:', error);
       } finally {
         setLoading(false);
       }
@@ -42,19 +42,22 @@ export default function OITEPage() {
   }, []);
 
   // Group documents by year
-  const groupedByYear = documents.reduce((acc, doc) => {
-    const year = doc.year?.toString() || "Unknown";
-    if (!acc[year]) {
-      acc[year] = [];
-    }
-    acc[year].push(doc);
-    return acc;
-  }, {} as Record<string, DocumentWithLandmark[]>);
+  const groupedByYear = documents.reduce(
+    (acc, doc) => {
+      const year = doc.year?.toString() || 'Unknown';
+      if (!acc[year]) {
+        acc[year] = [];
+      }
+      acc[year].push(doc);
+      return acc;
+    },
+    {} as Record<string, DocumentWithLandmark[]>
+  );
 
   // Sort years in descending order (most recent first), with "Unknown" at the end
   const sortedYears = Object.keys(groupedByYear).sort((a, b) => {
-    if (a === "Unknown") return 1;
-    if (b === "Unknown") return -1;
+    if (a === 'Unknown') return 1;
+    if (b === 'Unknown') return -1;
     return parseInt(b) - parseInt(a);
   });
 
@@ -108,13 +111,14 @@ export default function OITEPage() {
               <div className="flex items-center gap-3">
                 <span className="text-lg font-semibold">{year}</span>
                 <span className="text-sm text-muted-foreground">
-                  ({groupedByYear[year].length} {groupedByYear[year].length === 1 ? "file" : "files"})
+                  ({groupedByYear[year].length}{' '}
+                  {groupedByYear[year].length === 1 ? 'file' : 'files'})
                 </span>
               </div>
               <ChevronDown
                 className={cn(
-                  "h-5 w-5 text-muted-foreground transition-transform",
-                  expandedYears.has(year) && "rotate-180"
+                  'h-5 w-5 text-muted-foreground transition-transform',
+                  expandedYears.has(year) && 'rotate-180'
                 )}
               />
             </button>
@@ -122,7 +126,11 @@ export default function OITEPage() {
             {expandedYears.has(year) && (
               <div className="p-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {groupedByYear[year].map((doc) => (
-                  <DocumentCard key={doc.id} document={doc} isLandmark={doc.isLandmark} />
+                  <DocumentCard
+                    key={doc.id}
+                    document={doc}
+                    isLandmark={doc.isLandmark}
+                  />
                 ))}
               </div>
             )}

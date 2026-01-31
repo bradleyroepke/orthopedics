@@ -1,12 +1,18 @@
-import { notFound } from "next/navigation";
-import { DocumentList } from "@/components/documents/DocumentList";
-import { formatSubspecialty, unslugifySubspecialty, VALID_SUBSPECIALTIES } from "@/lib/utils";
+import { notFound } from 'next/navigation';
+import { DocumentList } from '@/components/documents/DocumentList';
+import {
+  formatSubspecialty,
+  unslugifySubspecialty,
+  VALID_SUBSPECIALTIES,
+} from '@/lib/utils';
 
 interface SubspecialtyPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export default async function SubspecialtyPage({ params }: SubspecialtyPageProps) {
+export default async function SubspecialtyPage({
+  params,
+}: SubspecialtyPageProps) {
   const { slug } = await params;
   const subspecialtyKey = unslugifySubspecialty(slug);
 

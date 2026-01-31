@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import {
   Footprints,
   Hand,
@@ -24,10 +24,10 @@ import {
   GraduationCap,
   ClipboardList,
   Star,
-} from "lucide-react";
-import { cn, formatSubspecialty, slugifySubspecialty } from "@/lib/utils";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
+} from 'lucide-react';
+import { cn, formatSubspecialty, slugifySubspecialty } from '@/lib/utils';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
 
 interface SubspecialtyData {
   name: string;
@@ -59,40 +59,45 @@ export function Sidebar() {
   useEffect(() => {
     async function fetchSubspecialties() {
       try {
-        const res = await fetch("/api/subspecialties");
+        const res = await fetch('/api/subspecialties');
         if (res.ok) {
           const data = await res.json();
           setSubspecialties(data.subspecialties);
           setTotalDocuments(data.totalDocuments);
         }
       } catch (error) {
-        console.error("Failed to fetch subspecialties:", error);
+        console.error('Failed to fetch subspecialties:', error);
       }
     }
     fetchSubspecialties();
   }, []);
 
   // Separate library items from subspecialties
-  const libraryCategories = ["TEXTBOOKS", "PRESENTATIONS"];
-  const hiddenCategories = ["RESEARCH"];
+  const libraryCategories = ['TEXTBOOKS', 'PRESENTATIONS'];
+  const hiddenCategories = ['RESEARCH'];
   const libraryItems = subspecialties.filter(
     (s) => libraryCategories.includes(s.name) && s.count > 0
   );
   const activeSubspecialties = subspecialties.filter(
-    (s) => !libraryCategories.includes(s.name) && !hiddenCategories.includes(s.name) && s.count > 0
+    (s) =>
+      !libraryCategories.includes(s.name) &&
+      !hiddenCategories.includes(s.name) &&
+      s.count > 0
   );
 
   return (
     <aside
       className={cn(
-        "relative flex flex-col border-r bg-card shadow-sm transition-all duration-300",
-        collapsed ? "w-16" : "w-64"
+        'relative flex flex-col border-r bg-card shadow-sm transition-all duration-300',
+        collapsed ? 'w-16' : 'w-64'
       )}
     >
-      <div className={cn(
-        "relative border-b border-primary/20 bg-gradient-to-b from-card to-accent/30",
-        collapsed ? "py-4" : "py-6"
-      )}>
+      <div
+        className={cn(
+          'relative border-b border-primary/20 bg-gradient-to-b from-card to-accent/30',
+          collapsed ? 'py-4' : 'py-6'
+        )}
+      >
         <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
         {!collapsed ? (
           <Link
@@ -123,7 +128,7 @@ export function Sidebar() {
           size="icon"
           onClick={() => setCollapsed(!collapsed)}
           className={cn(
-            "absolute right-2 top-2 h-7 w-7 opacity-60 hover:opacity-100 transition-opacity",
+            'absolute right-2 top-2 h-7 w-7 opacity-60 hover:opacity-100 transition-opacity'
           )}
         >
           {collapsed ? (
@@ -141,7 +146,7 @@ export function Sidebar() {
             icon={Home}
             label="All Files"
             count={totalDocuments}
-            isActive={pathname === "/"}
+            isActive={pathname === '/'}
             collapsed={collapsed}
           />
 
@@ -149,7 +154,7 @@ export function Sidebar() {
             href="/resources"
             icon={GraduationCap}
             label="Learning Resources"
-            isActive={pathname === "/resources"}
+            isActive={pathname === '/resources'}
             collapsed={collapsed}
           />
 
@@ -157,7 +162,7 @@ export function Sidebar() {
             href="/landmarks"
             icon={Star}
             label="Landmark Articles"
-            isActive={pathname === "/landmarks"}
+            isActive={pathname === '/landmarks'}
             collapsed={collapsed}
           />
 
@@ -183,7 +188,7 @@ export function Sidebar() {
             href="/oite"
             icon={ClipboardList}
             label="OITE"
-            isActive={pathname === "/oite"}
+            isActive={pathname === '/oite'}
             collapsed={collapsed}
           />
 
@@ -235,11 +240,11 @@ function NavItem({
     <Link
       href={href}
       className={cn(
-        "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+        'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
         isActive
-          ? "bg-primary text-primary-foreground"
-          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-        collapsed && "justify-center px-2"
+          ? 'bg-primary text-primary-foreground'
+          : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
+        collapsed && 'justify-center px-2'
       )}
       title={collapsed ? label : undefined}
     >
@@ -250,8 +255,10 @@ function NavItem({
           {count !== undefined && count > 0 && (
             <span
               className={cn(
-                "text-xs",
-                isActive ? "text-primary-foreground/80" : "text-muted-foreground"
+                'text-xs',
+                isActive
+                  ? 'text-primary-foreground/80'
+                  : 'text-muted-foreground'
               )}
             >
               {count}

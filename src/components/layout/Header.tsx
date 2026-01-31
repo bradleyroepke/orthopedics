@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import { signOut } from "next-auth/react";
-import { Search, LogOut, User } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Document } from "@prisma/client";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { signOut } from 'next-auth/react';
+import { Search, LogOut, User } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Document } from '@prisma/client';
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
 export function Header() {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [results, setResults] = useState<Document[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
@@ -33,7 +33,7 @@ export function Header() {
         setResults(data.results);
       }
     } catch (error) {
-      console.error("Search failed:", error);
+      console.error('Search failed:', error);
     } finally {
       setIsSearching(false);
     }
@@ -48,7 +48,7 @@ export function Header() {
   }, [query, search]);
 
   const handleSelect = (doc: Document) => {
-    setQuery("");
+    setQuery('');
     setResults([]);
     setShowResults(false);
     router.push(`/documents/${doc.id}`);
@@ -83,11 +83,13 @@ export function Header() {
                       onClick={() => handleSelect(doc)}
                       className="w-full px-4 py-3 text-left hover:bg-accent transition-colors"
                     >
-                      <p className="font-medium text-sm truncate">{doc.title}</p>
+                      <p className="font-medium text-sm truncate">
+                        {doc.title}
+                      </p>
                       <p className="text-xs text-muted-foreground truncate">
                         {[doc.author, doc.year, doc.journal]
                           .filter(Boolean)
-                          .join(" • ")}
+                          .join(' • ')}
                       </p>
                     </button>
                   </li>
@@ -106,7 +108,7 @@ export function Header() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => signOut({ callbackUrl: "/login" })}
+          onClick={() => signOut({ callbackUrl: '/login' })}
           title="Sign out"
         >
           <LogOut className="h-4 w-4" />

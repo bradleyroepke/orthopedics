@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import {
   ChevronDown,
   FileText,
   ExternalLink,
   Star,
   BookOpen,
-} from "lucide-react";
-import { cn, formatSubspecialty } from "@/lib/utils";
+} from 'lucide-react';
+import { cn, formatSubspecialty } from '@/lib/utils';
 
 interface LandmarkArticle {
   id: string;
@@ -53,7 +53,7 @@ export default function LandmarksPage() {
       try {
         const url = selectedSubspecialty
           ? `/api/landmark-articles?subspecialty=${selectedSubspecialty}`
-          : "/api/landmark-articles";
+          : '/api/landmark-articles';
         const res = await fetch(url);
         if (res.ok) {
           const data = await res.json();
@@ -68,7 +68,7 @@ export default function LandmarksPage() {
           setExpandedDecades(decades);
         }
       } catch (error) {
-        console.error("Failed to fetch landmark articles:", error);
+        console.error('Failed to fetch landmark articles:', error);
       } finally {
         setLoading(false);
       }
@@ -153,7 +153,7 @@ export default function LandmarksPage() {
           {articles.length} landmark articles
           {matchedCount > 0 && (
             <span className="text-primary">
-              {" "}
+              {' '}
               ({matchedCount} available in library)
             </span>
           )}
@@ -163,7 +163,7 @@ export default function LandmarksPage() {
       {/* Subspecialty Filter */}
       <div className="flex flex-wrap gap-2">
         <Button
-          variant={selectedSubspecialty === null ? "default" : "outline"}
+          variant={selectedSubspecialty === null ? 'default' : 'outline'}
           size="sm"
           onClick={() => setSelectedSubspecialty(null)}
         >
@@ -173,7 +173,7 @@ export default function LandmarksPage() {
           <Button
             key={s.subspecialty}
             variant={
-              selectedSubspecialty === s.subspecialty ? "default" : "outline"
+              selectedSubspecialty === s.subspecialty ? 'default' : 'outline'
             }
             size="sm"
             onClick={() => setSelectedSubspecialty(s.subspecialty)}
@@ -196,17 +196,17 @@ export default function LandmarksPage() {
                   {decade}
                 </span>
                 <span className="text-sm text-muted-foreground">
-                  ({groupedByDecade[decade].length}{" "}
+                  ({groupedByDecade[decade].length}{' '}
                   {groupedByDecade[decade].length === 1
-                    ? "article"
-                    : "articles"}
+                    ? 'article'
+                    : 'articles'}
                   )
                 </span>
               </div>
               <ChevronDown
                 className={cn(
-                  "h-5 w-5 text-muted-foreground transition-transform",
-                  expandedDecades.has(decade) && "rotate-180"
+                  'h-5 w-5 text-muted-foreground transition-transform',
+                  expandedDecades.has(decade) && 'rotate-180'
                 )}
               />
             </button>
@@ -243,8 +243,8 @@ function ArticleRow({
   return (
     <div
       className={cn(
-        "p-4 hover:bg-muted/50 transition-colors",
-        hasDocument && "bg-primary/5"
+        'p-4 hover:bg-muted/50 transition-colors',
+        hasDocument && 'bg-primary/5'
       )}
     >
       <div className="flex items-start gap-4">
@@ -311,4 +311,3 @@ function ArticleRow({
     </div>
   );
 }
-

@@ -1,11 +1,22 @@
-import { notFound } from "next/navigation";
-import Link from "next/link";
-import { ArrowLeft, Calendar, User, BookOpen, FileText, HardDrive } from "lucide-react";
-import prisma from "@/lib/prisma";
-import { PDFViewer } from "@/components/documents/PDFViewer";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { formatFileSize, formatSubspecialty, slugifySubspecialty } from "@/lib/utils";
+import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import {
+  ArrowLeft,
+  Calendar,
+  User,
+  BookOpen,
+  FileText,
+  HardDrive,
+} from 'lucide-react';
+import prisma from '@/lib/prisma';
+import { PDFViewer } from '@/components/documents/PDFViewer';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import {
+  formatFileSize,
+  formatSubspecialty,
+  slugifySubspecialty,
+} from '@/lib/utils';
 
 interface DocumentPageProps {
   params: Promise<{ id: string }>;
@@ -34,7 +45,9 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
                 Back
               </Button>
             </Link>
-            <Link href={`/subspecialty/${slugifySubspecialty(document.subspecialty)}`}>
+            <Link
+              href={`/subspecialty/${slugifySubspecialty(document.subspecialty)}`}
+            >
               <Badge variant="secondary">
                 {formatSubspecialty(document.subspecialty)}
               </Badge>

@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { Document } from "@prisma/client";
-import { DocumentCard } from "./DocumentCard";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { Document } from '@prisma/client';
+import { DocumentCard } from './DocumentCard';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 // Extended document type with landmark info
 interface DocumentWithLandmark extends Document {
@@ -17,6 +17,8 @@ interface DocumentListProps {
   initialDocuments?: DocumentWithLandmark[];
 }
 
+const PAGE_LIMIT = 50;
+
 interface PaginationData {
   page: number;
   limit: number;
@@ -24,11 +26,16 @@ interface PaginationData {
   totalPages: number;
 }
 
-export function DocumentList({ subspecialty, initialDocuments }: DocumentListProps) {
-  const [documents, setDocuments] = useState<DocumentWithLandmark[]>(initialDocuments || []);
+export function DocumentList({
+  subspecialty,
+  initialDocuments,
+}: DocumentListProps) {
+  const [documents, setDocuments] = useState<DocumentWithLandmark[]>(
+    initialDocuments || []
+  );
   const [pagination, setPagination] = useState<PaginationData>({
     page: 1,
-    limit: 50,
+    limit: PAGE_LIMIT,
     total: 0,
     totalPages: 0,
   });
@@ -42,10 +49,10 @@ export function DocumentList({ subspecialty, initialDocuments }: DocumentListPro
       try {
         const params = new URLSearchParams({
           page: String(pagination.page),
-          limit: String(pagination.limit),
+          limit: String(PAGE_LIMIT),
         });
         if (subspecialty) {
-          params.set("subspecialty", subspecialty);
+          params.set('subspecialty', subspecialty);
         }
 
         const res = await fetch(`/api/documents?${params}`);
@@ -55,7 +62,7 @@ export function DocumentList({ subspecialty, initialDocuments }: DocumentListPro
           setPagination(data.pagination);
         }
       } catch (error) {
-        console.error("Failed to fetch documents:", error);
+        console.error('Failed to fetch documents:', error);
       } finally {
         setLoading(false);
       }
@@ -95,7 +102,11 @@ export function DocumentList({ subspecialty, initialDocuments }: DocumentListPro
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {documents.map((doc) => (
-          <DocumentCard key={doc.id} document={doc} isLandmark={doc.isLandmark} />
+          <DocumentCard
+            key={doc.id}
+            document={doc}
+            isLandmark={doc.isLandmark}
+          />
         ))}
       </div>
 

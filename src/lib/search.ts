@@ -1,12 +1,12 @@
-import Fuse, { IFuseOptions } from "fuse.js";
-import { Document } from "@prisma/client";
+import Fuse, { IFuseOptions } from 'fuse.js';
+import { Document } from '@prisma/client';
 
 const fuseOptions: IFuseOptions<Document> = {
   keys: [
-    { name: "title", weight: 0.4 },
-    { name: "author", weight: 0.3 },
-    { name: "journal", weight: 0.2 },
-    { name: "filename", weight: 0.1 },
+    { name: 'title', weight: 0.4 },
+    { name: 'author', weight: 0.3 },
+    { name: 'journal', weight: 0.2 },
+    { name: 'filename', weight: 0.1 },
   ],
   threshold: 0.3,
   includeScore: true,

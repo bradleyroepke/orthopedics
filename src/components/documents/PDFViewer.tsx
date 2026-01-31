@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useCallback } from "react";
-import { Document, Page, pdfjs } from "react-pdf";
-import "react-pdf/dist/esm/Page/AnnotationLayer.css";
-import "react-pdf/dist/esm/Page/TextLayer.css";
+import { useState, useCallback } from 'react';
+import { Document, Page, pdfjs } from 'react-pdf';
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+import 'react-pdf/dist/esm/Page/TextLayer.css';
 import {
   ZoomIn,
   ZoomOut,
@@ -12,11 +12,11 @@ import {
   Download,
   Maximize,
   RotateCw,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
 
 // Configure PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
@@ -46,9 +46,9 @@ export function PDFViewer({ documentId, filename }: PDFViewerProps) {
   );
 
   const onDocumentLoadError = useCallback((error: Error) => {
-    setError("Failed to load PDF. The file may be corrupted or inaccessible.");
+    setError('Failed to load PDF. The file may be corrupted or inaccessible.');
     setLoading(false);
-    console.error("PDF load error:", error);
+    console.error('PDF load error:', error);
   }, []);
 
   const goToPage = (page: number) => {
@@ -69,7 +69,7 @@ export function PDFViewer({ documentId, filename }: PDFViewerProps) {
   };
 
   const downloadPdf = () => {
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = pdfUrl;
     link.download = filename;
     link.click();
@@ -99,7 +99,7 @@ export function PDFViewer({ documentId, filename }: PDFViewerProps) {
               max={numPages}
               className="h-8 w-14 text-center"
             />
-            <span className="text-muted-foreground">/ {numPages || "?"}</span>
+            <span className="text-muted-foreground">/ {numPages || '?'}</span>
           </div>
 
           <Button
