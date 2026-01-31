@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import prisma from '@/lib/prisma';
 import { PDFViewer } from '@/components/documents/PDFViewer';
+import { LandmarkToggle } from '@/components/documents/LandmarkToggle';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -80,6 +81,11 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
               {formatFileSize(document.fileSize)}
             </span>
           </div>
+        </div>
+
+        {/* Landmark Toggle */}
+        <div className="flex-shrink-0">
+          <LandmarkToggle documentId={document.id} />
         </div>
       </div>
 

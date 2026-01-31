@@ -13,6 +13,7 @@
     "db:push": "prisma db push",
     "db:seed": "tsx scripts/seed.ts",
     "index": "tsx scripts/index-documents.ts",
+    "index:landmarks": "tsx scripts/index-landmarks.ts",
     "import-landmarks": "tsx scripts/import-landmark-articles.ts",
     "rename:analyze": "tsx scripts/rename-articles.ts",
     "rename:apply": "tsx scripts/apply-renames.ts"
