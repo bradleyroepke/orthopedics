@@ -9,7 +9,9 @@ import {
   JOURNAL_SEARCH_PATTERNS,
   AUTHOR_SUFFIXES,
   FILENAME_REPLACEMENTS,
+  JOURNAL_ABBREVIATIONS,
 } from "./lib/journal-mappings";
+import { searchByTitle } from "./lib/scopus-lookup";
 
 const prisma = new PrismaClient();
 
@@ -94,6 +96,8 @@ const FILENAME_JOURNALS_LIST = [
   "Arthroscopy", "Lancet",
   // Additional common abbreviations
   "JNS", "JBJS-A", "JBJS-B", "ICL",
+  // General orthopaedics
+  "JOrthop", "J Orthopaedics",
 ];
 
 const FILENAME_JOURNALS = new Set(FILENAME_JOURNALS_LIST);
@@ -115,9 +119,40 @@ function findJournalInFilename(filename: string): string | null {
   return null;
 }
 
+// Words that are NOT valid author names (medical/anatomical terms often in titles)
+const INVALID_AUTHOR_WORDS = new Set([
+  // Anatomical terms
+  "valgus", "varus", "femoral", "tibial", "humeral", "radial", "ulnar",
+  "distal", "proximal", "anterior", "posterior", "medial", "lateral",
+  "periprosthetic", "intertrochanteric", "supracondylar", "subtrochanteric",
+  // Medical terms
+  "acute", "chronic", "surgical", "clinical", "primary", "revision",
+  "total", "partial", "open", "closed", "stable", "unstable",
+  // Common title starters
+  "the", "a", "an", "new", "novel", "modern", "current", "recent",
+  "very", "early", "late", "long", "short", "high", "low",
+  // Procedure/condition terms
+  "fracture", "fractures", "osteotomy", "arthroplasty", "arthroscopy",
+  "reconstruction", "repair", "fixation", "replacement", "fusion",
+  // Comparison words
+  "comparison", "versus", "evaluation", "analysis", "review", "outcomes",
+]);
+
+// Check if a string looks like a valid author last name
+function isValidAuthorName(name: string): boolean {
+  if (!name || name.length < 2) return false;
+  // Must start with capital, rest lowercase (typical last name pattern)
+  if (!/^[A-Z][a-z]+$/.test(name)) return false;
+  // Must not be a known invalid word
+  if (INVALID_AUTHOR_WORDS.has(name.toLowerCase())) return false;
+  return true;
+}
+
 // Extract metadata from existing filename
 function parseExistingFilename(filename: string): ExtractedMetadata {
   const nameWithoutExt = filename.replace(/\.pdf$/i, "");
+  // Also remove common download suffixes like .14, .98043, (1), etc.
+  const cleanedName = nameWithoutExt.replace(/\.\d+$/, "").replace(/\s*\(\d+\)$/, "");
 
   let author: string | null = null;
   let year: number | null = null;
@@ -127,7 +162,7 @@ function parseExistingFilename(filename: string): ExtractedMetadata {
   // Pattern 1: "YEAR - Author et al - Journal - Title" format
   // Example: "2001 - Rowe et al - JAAOS - DISH.pdf"
   const dashPattern = /^(\d{4})\s*-\s*([^-]+?)\s*(?:et\s*al\.?)?\s*-\s*([A-Za-z]+)\s*-\s*(.+)$/i;
-  const dashMatch = nameWithoutExt.match(dashPattern);
+  const dashMatch = cleanedName.match(dashPattern);
 
   if (dashMatch) {
     const yearNum = parseInt(dashMatch[1]);
@@ -137,7 +172,7 @@ function parseExistingFilename(filename: string): ExtractedMetadata {
     // Extract first author's last name
     const authorPart = dashMatch[2].trim();
     const authorMatch = authorPart.match(/^([A-Z][a-z]+)/);
-    if (authorMatch) {
+    if (authorMatch && isValidAuthorName(authorMatch[1])) {
       author = authorMatch[1];
     }
     // Check if journal part is a known journal
@@ -151,27 +186,47 @@ function parseExistingFilename(filename: string): ExtractedMetadata {
   }
 
   // Pattern 2: Underscore format "Author_Year_Journal_Title"
-  const parts = nameWithoutExt.split("_");
+  // BUT only use this if the parts actually validate as author/year/journal
+  const parts = cleanedName.split("_");
 
   if (parts.length >= 4) {
-    author = parts[0] !== "Unknown" ? parts[0].replace(/-/g, " ") : null;
-    const yearNum = parseInt(parts[1]);
-    if (!isNaN(yearNum) && yearNum >= 1900 && yearNum <= 2100) {
-      year = yearNum;
+    const potentialAuthor = parts[0];
+    const potentialYear = parseInt(parts[1]);
+    const potentialJournal = parts[2];
+
+    // Validate: author must look like a name, year must be valid, journal must be known
+    const authorValid = isValidAuthorName(potentialAuthor);
+    const yearValid = !isNaN(potentialYear) && potentialYear >= 1950 && potentialYear <= 2100;
+    const journalValid = FILENAME_JOURNALS.has(potentialJournal) ||
+                         FILENAME_JOURNALS.has(potentialJournal.toUpperCase());
+
+    if (authorValid && yearValid && journalValid) {
+      // This looks like a properly structured filename
+      author = potentialAuthor;
+      year = potentialYear;
+      journal = potentialJournal;
+      title = parts.slice(3).join(" ").replace(/-/g, " ");
+      return { author, year, journal, title };
     }
-    journal = parts[2] !== "Unknown" ? parts[2] : null;
-    title = parts.slice(3).join(" ").replace(/-/g, " ");
+
+    // Not a structured filename - treat underscores as spaces in title
+    title = cleanedName.replace(/_/g, " ").replace(/\s+/g, " ").trim();
   } else if (parts.length >= 2) {
-    author = parts[0] !== "Unknown" ? parts[0].replace(/-/g, " ") : null;
-    const yearNum = parseInt(parts[1]);
-    if (!isNaN(yearNum) && yearNum >= 1900 && yearNum <= 2100) {
-      year = yearNum;
+    // Check for "Author_Year" or similar partial patterns
+    const potentialAuthor = parts[0];
+    const potentialYear = parseInt(parts[1]);
+
+    if (isValidAuthorName(potentialAuthor) && !isNaN(potentialYear) &&
+        potentialYear >= 1950 && potentialYear <= 2100) {
+      author = potentialAuthor;
+      year = potentialYear;
       title = parts.slice(2).join(" ").replace(/-/g, " ") || null;
     } else {
-      title = parts.slice(1).join(" ").replace(/-/g, " ");
+      // Not structured - treat as title with underscores
+      title = cleanedName.replace(/_/g, " ").replace(/\s+/g, " ").trim();
     }
   } else {
-    title = nameWithoutExt.replace(/-/g, " ");
+    title = cleanedName.replace(/-/g, " ");
   }
 
   // If no journal found yet, scan the entire filename for known abbreviations
@@ -188,12 +243,27 @@ function extractAuthor(text: string): string | null {
 
   // Common words to skip (not authors)
   const skipWords = new Set([
+    // Section headings
     "abstract", "introduction", "background", "methods", "results", "discussion",
-    "conclusion", "review", "article", "clinical", "surgical", "management",
-    "treatment", "diagnosis", "outcome", "evaluation", "comparison", "analysis",
-    "reconstruction", "arthroplasty", "fracture", "injury", "technique",
-    "posttraumatic", "combined", "shoulder", "elbow", "knee", "hip", "spine",
+    "conclusion", "review", "article", "etiology", "overview", "summary",
+    // Medical terms
+    "clinical", "surgical", "management", "treatment", "diagnosis", "outcome",
+    "evaluation", "comparison", "analysis", "reconstruction", "arthroplasty",
+    "fracture", "injury", "technique", "posttraumatic", "combined",
+    // Anatomy terms
+    "shoulder", "elbow", "knee", "hip", "spine", "femoral", "valgus", "varus",
     "latissimus", "dorsi", "tendon", "ligament", "muscle", "bone", "joint",
+    "distal", "proximal", "anterior", "posterior", "medial", "lateral",
+    // Institutional terms (often appear before author names)
+    "orthopaedics", "orthopedics", "orthopaedic", "orthopedic",
+    "university", "hospital", "center", "centre", "institute", "department",
+    "permanente", "midlands", "association", "academy", "society", "college",
+    "unit", "care", "health", "medical", "medicine", "surgery", "sciences",
+    // Geographic/institutional names
+    "ontario", "california", "boston", "london", "chicago", "mayo", "cleveland",
+    // Title words that get misextracted
+    "structure", "composition", "function", "basic", "science", "current",
+    "update", "advances", "modern", "contemporary", "comprehensive", "guide",
   ]);
 
   // Pattern 1: "FirstName M. LastName, MD" or "FirstName LastName, MD/PhD"
@@ -369,6 +439,7 @@ function extractJournal(text: string): string | null {
     ["JOT", ["jot"]],
     ["HandClin", ["handclin"]],
     ["BJPS", ["bjps"]],
+    ["JOrthop", ["journal of orthopaedics", "j orthopaedics", "j orthop"]],
   ];
 
   for (const [abbrev, patterns] of journalPriority) {
@@ -542,6 +613,128 @@ function generateFilename(
   return `${yearPart}_${authorPart}_${journalPart}_${titlePart}`;
 }
 
+// Map full journal name to our abbreviation
+function mapJournalToAbbrev(journalName: string): string {
+  if (!journalName) return "";
+
+  // Check direct mapping
+  const abbrev = JOURNAL_ABBREVIATIONS[journalName];
+  if (abbrev) return abbrev;
+
+  // Check case-insensitive
+  const lower = journalName.toLowerCase();
+  for (const [name, ab] of Object.entries(JOURNAL_ABBREVIATIONS)) {
+    if (name.toLowerCase() === lower) return ab;
+  }
+
+  // Check if journal name contains known patterns
+  for (const [ab, patterns] of Object.entries(JOURNAL_SEARCH_PATTERNS)) {
+    for (const pattern of patterns) {
+      if (lower.includes(pattern)) return ab;
+    }
+  }
+
+  // Additional mappings for common Scopus journal names
+  const scopusJournalMap: Record<string, string> = {
+    "pain": "Pain",
+    "injury": "Injury",
+    "knee": "Knee",
+    "hand": "Hand",
+    "spine": "Spine",
+    "current opinion in anaesthesiology": "CurrOpinAnesth",
+    "journal of pain": "JPain",
+    "journal of orthopaedics": "JOrthop",
+  };
+
+  for (const [pattern, ab] of Object.entries(scopusJournalMap)) {
+    if (lower.includes(pattern)) return ab;
+  }
+
+  // Return shortened version of original name (take first letters of each word)
+  const words = journalName.split(/\s+/).filter(w => w.length > 2);
+  if (words.length >= 2) {
+    return words.slice(0, 3).map(w => w[0].toUpperCase() + w.slice(1, 3).toLowerCase()).join("");
+  }
+  return journalName.slice(0, 10);
+}
+
+// Calculate similarity between two strings (word overlap with simple stemming)
+function titleSimilarity(a: string, b: string): number {
+  if (!a || !b) return 0;
+
+  // Simple stemming: remove common suffixes
+  const stem = (word: string) => {
+    return word
+      .replace(/(?:ing|ed|s|ly|tion|ment)$/i, "")
+      .replace(/(?:ies)$/i, "y");
+  };
+
+  const normalize = (s: string) =>
+    s.toLowerCase()
+      .replace(/[^a-z0-9\s]/g, "")
+      .split(/\s+/)
+      .filter(w => w.length > 3)  // Require 4+ chars
+      .map(stem);
+
+  const wordsA = new Set(normalize(a));
+  const wordsB = new Set(normalize(b));
+
+  if (wordsA.size === 0 || wordsB.size === 0) return 0;
+
+  let matches = 0;
+  for (const word of wordsA) {
+    if (wordsB.has(word)) matches++;
+  }
+
+  // Return ratio of matching words to smaller set
+  const minSize = Math.min(wordsA.size, wordsB.size);
+  return matches / minSize;
+}
+
+// Lookup article in Scopus by title
+async function lookupScopus(title: string): Promise<ExtractedMetadata | null> {
+  if (!title || title.length < 15) return null;
+
+  try {
+    const result = await searchByTitle(title);
+    if (result.found && result.article) {
+      const article = result.article;
+
+      // Verify the result is actually relevant (avoid false positives)
+      const similarity = titleSimilarity(title, article.title);
+      if (similarity < 0.4) {
+        // Less than 40% word overlap - likely a false positive
+        return null;
+      }
+
+      // Also verify it's a medical/orthopaedic journal (not business, economics, etc.)
+      const journalLower = article.journal.toLowerCase();
+      const nonMedicalJournals = [
+        "business", "economics", "management", "finance", "marketing",
+        "accounting", "cuadernos", "review of", "journal of business",
+      ];
+      if (nonMedicalJournals.some(term => journalLower.includes(term))) {
+        return null;
+      }
+
+      return {
+        author: article.firstAuthor || null,
+        year: article.year || null,
+        journal: mapJournalToAbbrev(article.journal) || null,
+        title: article.title || null,
+      };
+    }
+  } catch (error) {
+    // Silently fail - will fall back to PDF extraction
+  }
+  return null;
+}
+
+// Rate limiter for Scopus API (10 requests per second max)
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 // Calculate confidence score
 function calculateConfidence(
   extracted: ExtractedMetadata,
@@ -629,6 +822,7 @@ async function main() {
   const args = process.argv.slice(2);
   let filterSubspecialty: string | undefined;
   let limit: number | undefined;
+  let useScopus = false;
 
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--subspecialty" && args[i + 1]) {
@@ -637,6 +831,8 @@ async function main() {
     } else if (args[i] === "--limit" && args[i + 1]) {
       limit = parseInt(args[i + 1]);
       i++;
+    } else if (args[i] === "--scopus") {
+      useScopus = true;
     }
   }
 
@@ -646,6 +842,9 @@ async function main() {
   }
   if (limit) {
     console.log(`Limiting to ${limit} files`);
+  }
+  if (useScopus) {
+    console.log(`Scopus API lookup: ENABLED`);
   }
 
   let files = await scanArticles(articlesPath, articlesPath, filterSubspecialty);
@@ -658,6 +857,7 @@ async function main() {
 
   const entries: RenameEntry[] = [];
   let processed = 0;
+  let scopusMatches = 0;
 
   for (const filePath of files) {
     processed++;
@@ -666,7 +866,8 @@ async function main() {
     const subspecialty = getSubspecialtyFromPath(relativePath);
 
     if (processed % 50 === 0) {
-      console.log(`Processing ${processed}/${files.length}...`);
+      const scopusInfo = useScopus ? ` (Scopus: ${scopusMatches} matches)` : "";
+      console.log(`Processing ${processed}/${files.length}...${scopusInfo}`);
     }
 
     // Extract metadata from filename
@@ -675,16 +876,36 @@ async function main() {
     // Extract metadata from PDF
     const { metadata: pdfMetadata, textPreview } = await extractPdfMetadata(filePath);
 
+    // Scopus lookup (if enabled) - use title from PDF or filename
+    let scopusMetadata: ExtractedMetadata | null = null;
+    if (useScopus) {
+      const searchTitle = pdfMetadata.title || filenameMetadata.title;
+      if (searchTitle && searchTitle.length >= 20) {
+        scopusMetadata = await lookupScopus(searchTitle);
+        if (scopusMetadata?.author) {
+          scopusMatches++;
+          // Add small delay to avoid rate limiting (100ms between requests)
+          await sleep(100);
+        }
+      }
+    }
+
     // Helper to check if a value looks valid (not just numbers/garbage)
     const isValidAuthor = (s: string | null) => s && /^[A-Z][a-z]+$/.test(s);
     const isValidTitle = (s: string | null) => s && s.length > 5 && !/^\d+$/.test(s);
 
-    // Merge metadata (prefer filename over PDF when filename has valid structured data)
+    // Merge metadata - priority: Scopus > filename (if structured) > PDF
     const merged: ExtractedMetadata = {
-      author: isValidAuthor(filenameMetadata.author) ? filenameMetadata.author : (pdfMetadata.author || filenameMetadata.author),
-      year: filenameMetadata.year || pdfMetadata.year,
-      journal: filenameMetadata.journal || pdfMetadata.journal,
-      title: isValidTitle(filenameMetadata.title) ? filenameMetadata.title : (pdfMetadata.title || filenameMetadata.title),
+      author: scopusMetadata?.author ||
+              (isValidAuthor(filenameMetadata.author) ? filenameMetadata.author : null) ||
+              pdfMetadata.author ||
+              filenameMetadata.author,
+      year: scopusMetadata?.year || filenameMetadata.year || pdfMetadata.year,
+      journal: scopusMetadata?.journal || filenameMetadata.journal || pdfMetadata.journal,
+      title: scopusMetadata?.title ||
+             (isValidTitle(filenameMetadata.title) ? filenameMetadata.title : null) ||
+             pdfMetadata.title ||
+             filenameMetadata.title,
     };
 
     // Calculate confidence
@@ -723,6 +944,7 @@ async function main() {
   // CSV output
   const csvHeader = [
     "current_filename",
+    "current_path",
     "subspecialty",
     "extracted_author",
     "extracted_year",
@@ -737,6 +959,7 @@ async function main() {
   const csvRows = entries.map((e) =>
     [
       `"${e.currentFilename.replace(/"/g, '""')}"`,
+      `"${e.currentPath.replace(/"/g, '""')}"`,
       e.subspecialty,
       `"${(e.extractedAuthor || "").replace(/"/g, '""')}"`,
       e.extractedYear || "",
@@ -763,6 +986,9 @@ async function main() {
 
   console.log("\n=== Analysis Complete ===");
   console.log(`Total files analyzed: ${entries.length}`);
+  if (useScopus) {
+    console.log(`Scopus matches: ${scopusMatches} (${((scopusMatches / entries.length) * 100).toFixed(1)}%)`);
+  }
   console.log(`High confidence: ${highConfidence} (${((highConfidence / entries.length) * 100).toFixed(1)}%)`);
   console.log(`Medium confidence: ${mediumConfidence} (${((mediumConfidence / entries.length) * 100).toFixed(1)}%)`);
   console.log(`Low confidence: ${lowConfidence} (${((lowConfidence / entries.length) * 100).toFixed(1)}%)`);

@@ -176,6 +176,10 @@ export const JOURNAL_ABBREVIATIONS: Record<string, string> = {
 
   "Orthopedics": "Orthopedics",
 
+  "Journal of Orthopaedics": "JOrthop",
+  "J Orthopaedics": "JOrthop",
+  "J Orthop": "JOrthop",
+
   // Anatomy
   "Journal of Anatomy": "JAnat",
   "J Anat": "JAnat",
@@ -315,6 +319,11 @@ export const JOURNAL_SEARCH_PATTERNS: Record<string, string[]> = {
     "j. anat.",
     "j.anat.",
     "j. anat",
+  ],
+  JOrthop: [
+    "journal of orthopaedics",
+    "j orthopaedics",
+    "j orthop",
   ],
 };
 
