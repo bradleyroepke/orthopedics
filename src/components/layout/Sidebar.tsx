@@ -20,6 +20,7 @@ import {
   Home,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   GraduationCap,
 } from "lucide-react";
 import { cn, formatSubspecialty, slugifySubspecialty } from "@/lib/utils";
@@ -52,6 +53,7 @@ export function Sidebar() {
   const [subspecialties, setSubspecialties] = useState<SubspecialtyData[]>([]);
   const [totalDocuments, setTotalDocuments] = useState(0);
   const [collapsed, setCollapsed] = useState(false);
+  const [articlesExpanded, setArticlesExpanded] = useState(true);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -70,7 +72,15 @@ export function Sidebar() {
     fetchSubspecialties();
   }, []);
 
-  const activeSubspecialties = subspecialties.filter((s) => s.count > 0);
+  // Separate library items from subspecialties
+  const libraryCategories = ["TEXTBOOKS", "PRESENTATIONS"];
+  const hiddenCategories = ["RESEARCH"];
+  const libraryItems = subspecialties.filter(
+    (s) => libraryCategories.includes(s.name) && s.count > 0
+  );
+  const activeSubspecialties = subspecialties.filter(
+    (s) => !libraryCategories.includes(s.name) && !hiddenCategories.includes(s.name) && s.count > 0
+  );
 
   return (
     <aside
@@ -105,7 +115,7 @@ export function Sidebar() {
           <NavItem
             href="/"
             icon={Home}
-            label="All Documents"
+            label="All Files"
             count={totalDocuments}
             isActive={pathname === "/"}
             collapsed={collapsed}
@@ -119,16 +129,43 @@ export function Sidebar() {
             collapsed={collapsed}
           />
 
+          {libraryItems.map((item) => {
+            const Icon = SUBSPECIALTY_ICONS[item.name] || Folder;
+            const href = `/subspecialty/${slugifySubspecialty(item.name)}`;
+            const isActive = pathname === href;
+
+            return (
+              <NavItem
+                key={item.name}
+                href={href}
+                icon={Icon}
+                label={formatSubspecialty(item.name)}
+                count={item.count}
+                isActive={isActive}
+                collapsed={collapsed}
+              />
+            );
+          })}
+
           {!collapsed && (
             <>
               <Separator className="my-4" />
-              <p className="px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Subspecialties
-              </p>
+              <button
+                onClick={() => setArticlesExpanded(!articlesExpanded)}
+                className="flex w-full items-center justify-between px-3 py-1 text-xs font-medium text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors"
+              >
+                <span>Articles</span>
+                <ChevronDown
+                  className={cn(
+                    "h-4 w-4 transition-transform",
+                    !articlesExpanded && "-rotate-90"
+                  )}
+                />
+              </button>
             </>
           )}
 
-          {activeSubspecialties.map((sub) => {
+          {articlesExpanded && activeSubspecialties.map((sub) => {
             const Icon = SUBSPECIALTY_ICONS[sub.name] || Folder;
             const href = `/subspecialty/${slugifySubspecialty(sub.name)}`;
             const isActive = pathname === href;
