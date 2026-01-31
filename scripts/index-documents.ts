@@ -56,7 +56,7 @@ function getDocumentType(filename: string, filePath: string): DocumentType {
 }
 
 // Parse filename to extract metadata
-// Expected format: Author_Year_Journal_Title.pdf
+// Expected format: Year_Author_Journal_Title.pdf (e.g., 2019_Medda_JOT_Valgus Intertrochanteric.pdf)
 function parseFilename(filename: string, isTextbook: boolean = false): {
   author: string | null;
   year: number | null;
@@ -99,26 +99,25 @@ function parseFilename(filename: string, isTextbook: boolean = false): {
   let title = nameWithoutExt;
 
   if (parts.length >= 4) {
-    // Standard format: Author_Year_Journal_Title
-    author = parts[0] !== "Unknown" ? parts[0].replace(/-/g, " ") : null;
-
-    const yearNum = parseInt(parts[1]);
+    // Standard format: Year_Author_Journal_Title
+    const yearNum = parseInt(parts[0]);
     if (!isNaN(yearNum) && yearNum >= 1900 && yearNum <= 2100) {
       year = yearNum;
     }
 
+    author = parts[1] !== "Unknown" ? parts[1].replace(/-/g, " ") : null;
     journal = parts[2] !== "Unknown" ? normalizeJournal(parts[2]) : null;
     title = parts.slice(3).join(" ").replace(/-/g, " ");
   } else if (parts.length >= 2) {
-    // Try to extract author and year at minimum
-    author = parts[0] !== "Unknown" ? parts[0].replace(/-/g, " ") : null;
-
-    const yearNum = parseInt(parts[1]);
+    // Try to extract year and author at minimum
+    const yearNum = parseInt(parts[0]);
     if (!isNaN(yearNum) && yearNum >= 1900 && yearNum <= 2100) {
       year = yearNum;
+      author = parts[1] !== "Unknown" ? parts[1].replace(/-/g, " ") : null;
       title = parts.slice(2).join(" ").replace(/-/g, " ") || nameWithoutExt;
     } else {
-      title = parts.slice(1).join(" ").replace(/-/g, " ");
+      // Fallback: treat as title with underscores
+      title = nameWithoutExt.replace(/_/g, " ");
     }
   }
 
