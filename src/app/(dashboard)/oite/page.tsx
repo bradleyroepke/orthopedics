@@ -7,8 +7,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+interface DocumentWithLandmark extends Document {
+  isLandmark?: boolean;
+}
+
 export default function OITEPage() {
-  const [documents, setDocuments] = useState<Document[]>([]);
+  const [documents, setDocuments] = useState<DocumentWithLandmark[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedYears, setExpandedYears] = useState<Set<string>>(new Set());
 
@@ -45,7 +49,7 @@ export default function OITEPage() {
     }
     acc[year].push(doc);
     return acc;
-  }, {} as Record<string, Document[]>);
+  }, {} as Record<string, DocumentWithLandmark[]>);
 
   // Sort years in descending order (most recent first), with "Unknown" at the end
   const sortedYears = Object.keys(groupedByYear).sort((a, b) => {
@@ -118,7 +122,7 @@ export default function OITEPage() {
             {expandedYears.has(year) && (
               <div className="p-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {groupedByYear[year].map((doc) => (
-                  <DocumentCard key={doc.id} document={doc} />
+                  <DocumentCard key={doc.id} document={doc} isLandmark={doc.isLandmark} />
                 ))}
               </div>
             )}

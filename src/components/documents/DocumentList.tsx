@@ -7,9 +7,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+// Extended document type with landmark info
+interface DocumentWithLandmark extends Document {
+  isLandmark?: boolean;
+}
+
 interface DocumentListProps {
   subspecialty?: string;
-  initialDocuments?: Document[];
+  initialDocuments?: DocumentWithLandmark[];
 }
 
 interface PaginationData {
@@ -20,7 +25,7 @@ interface PaginationData {
 }
 
 export function DocumentList({ subspecialty, initialDocuments }: DocumentListProps) {
-  const [documents, setDocuments] = useState<Document[]>(initialDocuments || []);
+  const [documents, setDocuments] = useState<DocumentWithLandmark[]>(initialDocuments || []);
   const [pagination, setPagination] = useState<PaginationData>({
     page: 1,
     limit: 50,
@@ -90,7 +95,7 @@ export function DocumentList({ subspecialty, initialDocuments }: DocumentListPro
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {documents.map((doc) => (
-          <DocumentCard key={doc.id} document={doc} />
+          <DocumentCard key={doc.id} document={doc} isLandmark={doc.isLandmark} />
         ))}
       </div>
 

@@ -22,12 +22,25 @@ export async function GET(request: NextRequest) {
       orderBy: [{ year: "desc" }, { author: "asc" }],
       skip,
       take: limit,
+      include: {
+        landmarkArticles: {
+          select: { id: true },
+          take: 1,
+        },
+      },
     }),
     prisma.document.count({ where }),
   ]);
 
+  // Add isLandmark flag to each document
+  const documentsWithLandmark = documents.map((doc) => ({
+    ...doc,
+    isLandmark: doc.landmarkArticles.length > 0,
+    landmarkArticles: undefined, // Remove the nested array
+  }));
+
   return NextResponse.json({
-    documents,
+    documents: documentsWithLandmark,
     pagination: {
       page,
       limit,
