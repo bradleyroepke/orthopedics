@@ -31,8 +31,35 @@ model Document {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  landmarkArticles LandmarkArticle[]
+
   @@index([subspecialty])
   @@index([author])
   @@index([year])
   @@index([documentType])
+}
+
+model LandmarkArticle {
+  id           String   @id @default(cuid())
+  year         Int
+  author       String
+  journal      String
+  title        String
+  description  String?
+  subspecialty String
+  displayOrder Int      @default(0)
+
+  // Link to existing document if matched
+  documentId   String?
+  document     Document? @relation(fields: [documentId], references: [id])
+
+  // Matching metadata
+  matchConfidence Float?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([subspecialty])
+  @@index([year])
+  @@index([documentId])
 }

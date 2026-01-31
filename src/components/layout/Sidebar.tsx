@@ -23,6 +23,7 @@ import {
   ChevronRight,
   GraduationCap,
   ClipboardList,
+  Star,
 } from "lucide-react";
 import { cn, formatSubspecialty, slugifySubspecialty } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -149,6 +150,14 @@ export function Sidebar() {
             icon={GraduationCap}
             label="Learning Resources"
             isActive={pathname === "/resources"}
+            collapsed={collapsed}
+          />
+
+          <NavItem
+            href="/landmarks"
+            icon={Star}
+            label="Landmark Articles"
+            isActive={pathname === "/landmarks"}
             collapsed={collapsed}
           />
 
