@@ -190,17 +190,18 @@ async function main() {
 
   console.log(`\nFound ${allDocuments.length} landmark PDFs total\n`);
 
-  if (allDocuments.length === 0) {
-    console.log("No PDFs found in Landmark folders.");
-    console.log("Add PDF files to the Landmark folders and run this script again.");
-    return;
-  }
-
-  // Clear existing data
+  // Clear existing data (always, even if no new documents)
   console.log("Clearing existing data...");
   await prisma.landmarkArticle.deleteMany();
   await prisma.document.deleteMany();
   console.log("  Cleared all documents and landmark articles\n");
+
+  if (allDocuments.length === 0) {
+    console.log("No PDFs found in Landmark folders.");
+    console.log("Add PDF files to the Landmark folders and run this script again.");
+    console.log("\nDatabase is now empty - only landmark articles will be shown on the site.");
+    return;
+  }
 
   // Insert documents and landmark articles
   console.log("Indexing documents...");
