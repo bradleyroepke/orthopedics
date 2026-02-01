@@ -18,19 +18,18 @@ model User {
 }
 
 model Document {
-  id           String   @id @default(cuid())
-  filename     String
-  filePath     String   @unique
-  fileSize     Int
-  title        String
-  author       String?
-  year         Int?
-  journal      String?
-  subspecialty String
-  documentType String   @default("ARTICLE")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
+  id               String            @id @default(cuid())
+  filename         String
+  filePath         String            @unique
+  fileSize         Int
+  title            String
+  author           String?
+  year             Int?
+  journal          String?
+  subspecialty     String
+  documentType     String            @default("ARTICLE")
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
   landmarkArticles LandmarkArticle[]
 
   @@index([subspecialty])
@@ -40,24 +39,19 @@ model Document {
 }
 
 model LandmarkArticle {
-  id           String   @id @default(cuid())
-  year         Int
-  author       String
-  journal      String
-  title        String
-  description  String?
-  subspecialty String
-  displayOrder Int      @default(0)
-
-  // Link to existing document if matched
-  documentId   String?
-  document     Document? @relation(fields: [documentId], references: [id])
-
-  // Matching metadata
+  id              String    @id @default(cuid())
+  year            Int
+  author          String
+  journal         String
+  title           String
+  description     String?
+  subspecialty    String
+  displayOrder    Int       @default(0)
+  documentId      String?
   matchConfidence Float?
-
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  document        Document? @relation(fields: [documentId], references: [id])
 
   @@index([subspecialty])
   @@index([year])
