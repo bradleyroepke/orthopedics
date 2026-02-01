@@ -136,8 +136,8 @@ const FOLDER_SUBSPECIALTY_MAP: Record<string, string> = {
   Trauma: "TRAUMA",
 };
 
-// Find all PDFs in Landmark folders
-async function findLandmarkPDFs(): Promise<
+// Find all PDFs in Articles folder (searches entire tree)
+async function findAllPDFs(): Promise<
   Map<string, { filename: string; filePath: string; subspecialty: string }>
 > {
   const pdfMap = new Map<
@@ -153,31 +153,20 @@ async function findLandmarkPDFs(): Promise<
         const fullPath = path.join(dirPath, entry.name);
 
         if (entry.isDirectory()) {
-          if (entry.name.toLowerCase().includes("landmark")) {
-            // Found a landmark folder - scan its contents
-            const subEntries = await readdir(fullPath, { withFileTypes: true });
-            for (const subEntry of subEntries) {
-              if (
-                subEntry.isFile() &&
-                subEntry.name.toLowerCase().endsWith(".pdf")
-              ) {
-                const relativePath = path.relative(
-                  ARTICLES_PATH,
-                  path.join(fullPath, subEntry.name)
-                );
-                pdfMap.set(subEntry.name.toLowerCase(), {
-                  filename: subEntry.name,
-                  filePath: relativePath,
-                  subspecialty,
-                });
-              }
-            }
-          } else {
-            // Check if this folder maps to a subspecialty
-            const folderSubspecialty =
-              FOLDER_SUBSPECIALTY_MAP[entry.name] || subspecialty;
-            await scanDir(fullPath, folderSubspecialty);
-          }
+          // Check if this folder maps to a subspecialty
+          const folderSubspecialty =
+            FOLDER_SUBSPECIALTY_MAP[entry.name] || subspecialty;
+          await scanDir(fullPath, folderSubspecialty);
+        } else if (
+          entry.isFile() &&
+          entry.name.toLowerCase().endsWith(".pdf")
+        ) {
+          const relativePath = path.relative(ARTICLES_PATH, fullPath);
+          pdfMap.set(entry.name.toLowerCase(), {
+            filename: entry.name,
+            filePath: relativePath,
+            subspecialty,
+          });
         }
       }
     } catch (error) {
@@ -252,10 +241,10 @@ async function main() {
     return;
   }
 
-  // Find all PDFs in Landmark folders
-  console.log("Scanning Landmark folders for PDFs...");
-  const pdfMap = await findLandmarkPDFs();
-  console.log(`Found ${pdfMap.size} PDFs in Landmark folders\n`);
+  // Find all PDFs in Articles folder
+  console.log("Scanning Articles folder for PDFs...");
+  const pdfMap = await findAllPDFs();
+  console.log(`Found ${pdfMap.size} PDFs in Articles folder\n`);
 
   // Clear existing data
   console.log("Clearing existing data...");
@@ -275,12 +264,14 @@ async function main() {
     let documentId: string | null = null;
 
     if (pdfMatch) {
-      // Create document record for the PDF
-      const document = await prisma.document.create({
-        data: {
+      // Create or find existing document record for the PDF
+      const document = await prisma.document.upsert({
+        where: { filePath: pdfMatch.filePath },
+        update: {}, // Don't update if exists
+        create: {
           filename: pdfMatch.filename,
           filePath: pdfMatch.filePath,
-          fileSize: 0, // We could get actual size if needed
+          fileSize: 0,
           title: entry.title,
           author: entry.author !== "Unknown" ? entry.author : null,
           year: entry.year,
